@@ -18,6 +18,14 @@ public interface Series
      */
     int getMaxIssue();
 
+    /**
+     * The release date of a given issue.
+     *
+     * @param issue
+     * @return release date
+     */
+    DateTime getIssueReleaseDate(int issue);
+
     DateTime getFirstIssueReleaseDate();
 
     DateTime getFixedReleaseDate();

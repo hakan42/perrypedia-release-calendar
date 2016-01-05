@@ -22,9 +22,22 @@ public abstract class AbstractSeries implements Series
         return 9999;
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    public DateTime getIssueReleaseDate(int issue)
+    {
+        if (issue == -1)
+        {
+            return null;
+        }
+
+        return null;
+    }
+
     public DateTime getFirstIssueReleaseDate()
     {
-        return null;
+        return getIssueReleaseDate(1);
     }
 
     public DateTime getFixedReleaseDate()
