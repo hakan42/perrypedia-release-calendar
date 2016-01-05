@@ -4,6 +4,9 @@ import org.joda.time.DateTime;
 
 public class PerryRhodanNeoStorySeries extends AbstractSeries
 {
+    // PRNS 1 - Oktober 2014 ???
+    public static final DateTime RELEASE_OF_ISSUE_1 = null;
+
     // PRNS 5 - November 2015 ???
     public static final DateTime RELEASE_OF_ISSUE_5 = null;
 
@@ -21,6 +24,12 @@ public class PerryRhodanNeoStorySeries extends AbstractSeries
     public int getMaxIssue()
     {
         return 7;
+    }
+
+    public DateTime getFirstIssueReleaseDate()
+    {
+        // FIXME mock for now, implement properly...
+        return RELEASE_OF_ISSUE_1;
     }
 
     public DateTime getFixedReleaseDate()
