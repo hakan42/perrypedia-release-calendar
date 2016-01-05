@@ -20,7 +20,7 @@ public interface Series
 
     DateTime getFirstIssueReleaseDate();
 
-    DateTime fixedReleaseDate();
+    DateTime getFixedReleaseDate();
 
-    int fixedReleaseIssue();
+    int getFixedReleaseIssue();
 }

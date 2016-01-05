@@ -23,12 +23,12 @@ public class PerryRhodanArkonSeries extends AbstractSeries
         return 12;
     }
 
-    public DateTime fixedReleaseDate()
+    public DateTime getFixedReleaseDate()
     {
         return RELEASE_OF_ISSUE_1;
     }
 
-    public int fixedReleaseIssue()
+    public int getFixedReleaseIssue()
     {
         return 1;
     }

@@ -23,12 +23,12 @@ public class PerryRhodanNeoStorySeries extends AbstractSeries
         return 7;
     }
 
-    public DateTime fixedReleaseDate()
+    public DateTime getFixedReleaseDate()
     {
         return RELEASE_OF_ISSUE_5;
     }
 
-    public int fixedReleaseIssue()
+    public int getFixedReleaseIssue()
     {
         return 0;
     }

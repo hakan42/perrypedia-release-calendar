@@ -27,12 +27,12 @@ public abstract class AbstractSeries implements Series
         return null;
     }
 
-    public DateTime fixedReleaseDate()
+    public DateTime getFixedReleaseDate()
     {
         return null;
     }
 
-    public int fixedReleaseIssue()
+    public int getFixedReleaseIssue()
     {
         return 0;
     }
@@ -46,8 +46,8 @@ public abstract class AbstractSeries implements Series
         // @formatter:off
         return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)
                 .append("daysPerIssue", getDaysPerIssue())
-                .append("fixedReleaseIssue", fixedReleaseIssue())
-                .append("fixedReleaseDate", fixedReleaseDate())
+                .append("fixedReleaseIssue", getFixedReleaseIssue())
+                .append("fixedReleaseDate", getFixedReleaseDate())
                 .append("firstIssueReleaseDate", getFirstIssueReleaseDate())
                 .toString();
         // @formatter:on
