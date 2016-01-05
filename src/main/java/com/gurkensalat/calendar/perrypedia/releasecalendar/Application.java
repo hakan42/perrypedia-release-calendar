@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.builder.SpringApplicationBuilder;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 
 @SpringBootApplication
@@ -25,8 +23,16 @@ public class Application implements CommandLineRunner
 
     public void run(String... strings) throws Exception
     {
-        logger.info("spring-boot command line runner main...");
-        logger.info(environment.getProperty("foo"));
-        logger.info("spring-boot command line runner main end...");
+        Series classic = new PerryRhodanSeries();
+        logger.info("Series {}", classic);
+
+        Series neo = new PerryRhodanNeoSeries();
+        logger.info("Series {}", neo);
+
+        Series neoStory = new PerryRhodanNeoStorySeries();
+        logger.info("Series {}", neoStory);
+
+        Series arkon = new PerryRhodanArkonSeries();
+        logger.info("Series {}", arkon);
     }
 }
