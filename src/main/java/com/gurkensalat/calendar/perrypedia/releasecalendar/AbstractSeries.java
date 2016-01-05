@@ -8,6 +8,14 @@ public abstract class AbstractSeries implements Series
     /**
      * {@inheritDoc}
      */
+    public int getDaysPerIssue()
+    {
+        return 7;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public int getMaxIssue()
     {
         return 9999;
@@ -19,6 +27,6 @@ public abstract class AbstractSeries implements Series
     @Override
     public String toString()
     {
-        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).toString();
+        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE).append("daysPerIssue", getDaysPerIssue()).toString();
     }
 }
