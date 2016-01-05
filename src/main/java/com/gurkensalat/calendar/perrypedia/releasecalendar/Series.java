@@ -16,7 +16,7 @@ public interface Series
      *
      * @return number of maximum issue
      */
-    int getMaxIssue();
+    int getMaxIssues();
 
     /**
      * The release date of a given issue.

@@ -8,7 +8,7 @@ public class PerryRhodanNeoSeries extends AbstractSeries
     private static final DateTime RELEASE_OF_ISSUE_112 = new DateTime().withDate(2015, 12, 31).withMillisOfDay(0);
 
     // PRN1 - Freitag, 30. September 2011
-    private static final DateTime RELEASE_OF_ISSUE_1 = new DateTime().withDate(2011, 9, 30).withMillisOfDay(0);
+    private static DateTime releaseOfFirstIssue;
 
     /**
      * {@inheritDoc}
@@ -18,10 +18,17 @@ public class PerryRhodanNeoSeries extends AbstractSeries
         return 14;
     }
 
-    public DateTime firstIssueReleaseDate()
+    /**
+     * {@inheritDoc}
+     */
+    public DateTime getFirstIssueReleaseDate()
     {
-        // FIXME mock for now, implement properly...
-        return RELEASE_OF_ISSUE_1;
+        if (releaseOfFirstIssue == null)
+        {
+            releaseOfFirstIssue = getIssueReleaseDate(1);
+        }
+
+        return releaseOfFirstIssue;
     }
 
     public DateTime getFixedReleaseDate()
