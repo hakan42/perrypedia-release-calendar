@@ -71,6 +71,12 @@ public abstract class AbstractSeries implements Series
 
     public abstract int getFixedReleaseIssue();
 
+
+    /**
+     * {@inheritDoc}
+     */
+    public abstract String getSourcePrefix();
+
     /**
      * {@inheritDoc}
      */

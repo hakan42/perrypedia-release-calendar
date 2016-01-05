@@ -48,4 +48,13 @@ public class PerryRhodanArkonSeries extends AbstractSeries
     {
         return 1;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getSourcePrefix()
+    {
+        return "PRAR";
+    }
 }

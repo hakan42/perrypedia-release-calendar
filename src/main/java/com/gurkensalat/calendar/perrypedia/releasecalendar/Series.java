@@ -26,9 +26,20 @@ public interface Series
      */
     DateTime getIssueReleaseDate(int issue);
 
+    /**
+     * Convenience wrapper to fetch the start date of a series.
+     * @return release date
+     */
     DateTime getFirstIssueReleaseDate();
 
     DateTime getFixedReleaseDate();
 
     int getFixedReleaseIssue();
+
+    /**
+     * Prefix on perrypedia wiki articles.
+     *
+     * @return prefix
+     */
+    String getSourcePrefix();
 }

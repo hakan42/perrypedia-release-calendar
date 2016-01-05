@@ -40,4 +40,13 @@ public class PerryRhodanNeoSeries extends AbstractSeries
     {
         return 112;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getSourcePrefix()
+    {
+        return "PRN";
+    }
 }

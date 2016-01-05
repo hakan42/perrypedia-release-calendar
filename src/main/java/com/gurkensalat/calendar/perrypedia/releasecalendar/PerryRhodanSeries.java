@@ -32,4 +32,13 @@ public class PerryRhodanSeries extends AbstractSeries
     {
         return 2837;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getSourcePrefix()
+    {
+        return "PR";
+    }
 }
