@@ -8,7 +8,7 @@
     <version>0.0.1-SNAPSHOT</version>
 
     <inceptionYear>2016</inceptionYear>
-    <url>http://hakan42.github.com/perrypedia-release-calendar/</url>
+    <url>https://hakan42.github.com/perrypedia-release-calendar/</url>
     <description></description>
 
     <properties>
@@ -93,7 +93,7 @@
     <licenses>
         <license>
             <name>Apache 2.0</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
