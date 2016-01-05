@@ -1,7 +1,12 @@
 package com.gurkensalat.calendar.perrypedia.releasecalendar;
 
+import org.joda.time.DateTime;
+
 public class PerryRhodanArkonSeries extends AbstractSeries
 {
+    // PRAR 1 - 22.1.2016
+    private static final DateTime RELEASE_OF_ISSUE_1 = new DateTime().withDate(2016, 1, 22).withMillisOfDay(0);
+
     /**
      * {@inheritDoc}
      */
@@ -16,5 +21,15 @@ public class PerryRhodanArkonSeries extends AbstractSeries
     public int getMaxIssue()
     {
         return 12;
+    }
+
+    public DateTime fixedReleaseDate()
+    {
+        return RELEASE_OF_ISSUE_1;
+    }
+
+    public int fixedReleaseIssue()
+    {
+        return 1;
     }
 }

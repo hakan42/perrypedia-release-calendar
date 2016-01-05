@@ -1,5 +1,7 @@
 package com.gurkensalat.calendar.perrypedia.releasecalendar;
 
+import org.joda.time.DateTime;
+
 public interface Series
 {
     /**
@@ -15,4 +17,8 @@ public interface Series
      * @return number of maximum issue
      */
     int getMaxIssue();
+
+    DateTime fixedReleaseDate();
+
+    int fixedReleaseIssue();
 }
