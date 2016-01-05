@@ -22,6 +22,11 @@ public abstract class AbstractSeries implements Series
         return 9999;
     }
 
+    public DateTime getFirstIssueReleaseDate()
+    {
+        return null;
+    }
+
     public DateTime fixedReleaseDate()
     {
         return null;
@@ -43,6 +48,7 @@ public abstract class AbstractSeries implements Series
                 .append("daysPerIssue", getDaysPerIssue())
                 .append("fixedReleaseIssue", fixedReleaseIssue())
                 .append("fixedReleaseDate", fixedReleaseDate())
+                .append("firstIssueReleaseDate", getFirstIssueReleaseDate())
                 .toString();
         // @formatter:on
     }

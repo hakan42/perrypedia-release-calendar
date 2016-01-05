@@ -18,6 +18,8 @@ public interface Series
      */
     int getMaxIssue();
 
+    DateTime getFirstIssueReleaseDate();
+
     DateTime fixedReleaseDate();
 
     int fixedReleaseIssue();
