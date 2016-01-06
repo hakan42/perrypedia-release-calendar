@@ -6,6 +6,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.mediawiki.xml.export_0.MediaWikiType;
+import org.mediawiki.xml.export_0.PageType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,12 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.core.env.Environment;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
+import java.io.StringReader;
 
 @SpringBootApplication
 public class Application implements CommandLineRunner
@@ -68,6 +76,24 @@ public class Application implements CommandLineRunner
             // do something useful with the response body
             String data = EntityUtils.toString(entity1);
             logger.info("{}", data);
+
+            JAXBContext jaxbContext = JAXBContext.newInstance(MediaWikiType.class);
+            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+
+            // MediaWikiType mwt = (MediaWikiType) unmarshaller.unmarshal(new StringReader(data));
+
+            StreamSource source = new StreamSource(new StringReader(data));
+            JAXBElement<MediaWikiType> userElement = unmarshaller.unmarshal(source, MediaWikiType.class);
+            MediaWikiType mwt = userElement.getValue();
+            logger.info("Parsed Data: {}", mwt);
+
+            for (PageType page : mwt.getPage())
+            {
+                logger.info("  page: {}", page);
+                logger.info("    id:    {}", page.getId());
+                logger.info("    title: {}", page.getTitle());
+                logger.info("    redir: {}", page.getRedirect().getTitle());
+            }
 
             // and ensure it is fully consumed
             EntityUtils.consume(entity1);
