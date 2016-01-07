@@ -14,7 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.orm.jpa.EntityScan;
+import org.springframework.context.annotation.Bean;
 import org.springframework.core.env.Environment;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
@@ -23,7 +26,9 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.StringReader;
 
 @SpringBootApplication
-public class Application implements CommandLineRunner
+@EntityScan
+@EnableJpaRepositories
+public class Application
 {
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
@@ -32,11 +37,14 @@ public class Application implements CommandLineRunner
 
     public static void main(String[] args)
     {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(Application.class);
     }
 
-    public void run(String... strings) throws Exception
+    @Bean
+    public CommandLineRunner demo(WikiPageRepository wikiPageRepository) throws Exception
     {
+        logger.info("demo method called...");
+
         Series classic = new PerryRhodanSeries();
         // logger.info("Series {}", classic);
 
@@ -48,19 +56,6 @@ public class Application implements CommandLineRunner
 
         Series arkon = new PerryRhodanArkonSeries();
         // logger.info("Series {}", arkon);
-
-        // http://www.perrypedia.proc.org/mediawiki/index.php?title=Quelle:PR2837&redirect=no
-        // MediaWikiBot wikiBot = new MediaWikiBot("http://www.perrypedia.proc.org/w/");
-        // Article article = wikiBot.getArticle("Quelle:PR2837");
-        // logger.info(article.getText().substring(5, 42));
-
-        // MediaWikiBot wikiBot = new MediaWikiBot("https://en.wikipedia.org/w/");
-        // Article article = wikiBot.getArticle("42");
-        // logger.info(article.getText().substring(5, 42));
-        // HITCHHIKER'S GUIDE TO THE GALAXY FANS
-        // applyChangesTo(article);
-        // wikiBot.login("user", "***");
-        // article.save();
 
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet("http://www.perrypedia.proc.org/wiki/Spezial:Exportieren/Quelle:PR2837");
@@ -79,8 +74,6 @@ public class Application implements CommandLineRunner
 
             JAXBContext jaxbContext = JAXBContext.newInstance(MediaWikiType.class);
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-
-            // MediaWikiType mwt = (MediaWikiType) unmarshaller.unmarshal(new StringReader(data));
 
             StreamSource source = new StreamSource(new StringReader(data));
             JAXBElement<MediaWikiType> userElement = unmarshaller.unmarshal(source, MediaWikiType.class);
@@ -102,5 +95,7 @@ public class Application implements CommandLineRunner
         {
             response1.close();
         }
+
+        return null;
     }
 }
