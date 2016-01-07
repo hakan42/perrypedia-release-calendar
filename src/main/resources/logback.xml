@@ -32,6 +32,7 @@
     <logger name="com.zaxxer.hikari.pool" level="info"/>
 
     <logger name="com.gurkensalat.calendar.perrypedia" level="debug"/>
+    <logger name="com.gurkensalat.calendar.perrypedia.releasecalendar.AbstractSeries" level="info"/>
 
     <root level="debug">
         <appender-ref ref="console"/>
