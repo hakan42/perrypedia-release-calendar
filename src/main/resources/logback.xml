@@ -25,7 +25,10 @@
     <logger name="org.apache.commons.beanutils" level="info"/>
     <logger name="org.apache.commons.digester3" level="info"/>
     <logger name="org.eclipse" level="info"/>
+    <logger name="org.hibernate" level="info"/>
     <logger name="org.springframework" level="info"/>
+    <logger name="org.springframework.aop.interceptor" level="trace"/>
+    <logger name="com.zaxxer.hikari.pool" level="info"/>
 
     <logger name="com.gurkensalat.calendar.perrypedia" level="debug"/>
 
