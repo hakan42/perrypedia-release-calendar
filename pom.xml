@@ -41,7 +41,7 @@
         <h2-database.version>1.4.187</h2-database.version>
         <jadira-usertype.version>3.2.0.GA</jadira-usertype.version>
 
-        <hikari-cp.version>2.4.0</hikari-cp.version>
+        <hikari-cp.version>2.4.3</hikari-cp.version>
 
         <!-- Sundry other libraries -->
         <commons-lang.version>3.4</commons-lang.version>
