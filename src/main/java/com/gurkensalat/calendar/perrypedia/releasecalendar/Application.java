@@ -41,21 +41,29 @@ public class Application
     }
 
     @Bean
-    public CommandLineRunner demo(WikiPageRepository wikiPageRepository) throws Exception
+    public CommandLineRunner seriesCalculator() throws Exception
     {
-        logger.info("demo method called...");
+        logger.info("seriesCalculator method called...");
 
         Series classic = new PerryRhodanSeries();
-        // logger.info("Series {}", classic);
+        logger.info("Series {}", classic);
 
         Series neo = new PerryRhodanNeoSeries();
-        // logger.info("Series {}", neo);
+        logger.info("Series {}", neo);
 
         Series neoStory = new PerryRhodanNeoStorySeries();
-        // logger.info("Series {}", neoStory);
+        logger.info("Series {}", neoStory);
 
         Series arkon = new PerryRhodanArkonSeries();
-        // logger.info("Series {}", arkon);
+        logger.info("Series {}", arkon);
+
+        return null;
+    }
+
+    @Bean
+    public CommandLineRunner downloadAndDecode() throws Exception
+    {
+        logger.info("downloadAndDecode method called...");
 
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpGet httpGet = new HttpGet("http://www.perrypedia.proc.org/wiki/Spezial:Exportieren/Quelle:PR2837");
