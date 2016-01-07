@@ -20,3 +20,6 @@ target
 
 # Log files
 env.*_IS_UNDEFINED
+
+# H2 database files
+*.mv.db
