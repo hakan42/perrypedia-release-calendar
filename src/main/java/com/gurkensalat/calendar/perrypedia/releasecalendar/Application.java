@@ -6,6 +6,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.joda.time.DateTime;
 import org.mediawiki.xml.export_0.MediaWikiType;
 import org.mediawiki.xml.export_0.PageType;
 import org.slf4j.Logger;
@@ -24,6 +25,8 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.List;
 
 @SpringBootApplication
 @EntityScan
@@ -41,6 +44,56 @@ public class Application
     }
 
     @Bean
+    public CommandLineRunner work() throws Exception
+    {
+        // first, calculate which issues we need to check
+
+        DateTime start = DateTime.now().minusDays(7).withMillisOfDay(0);
+        DateTime end = DateTime.now().plusDays(60).withMillisOfDay(0);
+
+        List<Issue> issuesToCheck = new ArrayList<Issue>();
+
+        // check Perry Rhodan Classic first
+        issuesToCheck.addAll(calculateIssues(new PerryRhodanSeries(), 2838, 2840, start, end));
+
+        // check Perry Rhodan NEO next
+        issuesToCheck.addAll(calculateIssues(new PerryRhodanNeoSeries(), 110, 120, start, end));
+
+        // check Perry Rhodan NEO Story next
+        issuesToCheck.addAll(calculateIssues(new PerryRhodanNeoStorySeries(), 1, 12, start, end));
+
+        // check Perry Rhodan Arkon next
+        issuesToCheck.addAll(calculateIssues(new PerryRhodanArkonSeries(), 1, 12, start, end));
+
+        return null;
+    }
+
+    private List<Issue> calculateIssues(Series series, int startIssue, int endIssue, DateTime start, DateTime end)
+    {
+        List<Issue> result = new ArrayList<Issue>();
+
+        for (int i = startIssue; i < endIssue; i++)
+        {
+            DateTime issueDate = series.getIssueReleaseDate(i);
+
+            if (issueDate != null)
+            {
+                if (start.isBefore(issueDate))
+                {
+                    if (end.isAfter(issueDate))
+                    {
+                        Issue issue = new Issue(series, i);
+                        logger.info("Have to add issue {}", issue);
+                        result.add(issue);
+                    }
+                }
+            }
+        }
+
+        return result;
+    }
+
+    // @Bean
     public CommandLineRunner seriesCalculator() throws Exception
     {
         logger.info("seriesCalculator method called...");
@@ -60,7 +113,7 @@ public class Application
         return null;
     }
 
-    @Bean
+    // @Bean
     public CommandLineRunner downloadAndDecode() throws Exception
     {
         logger.info("downloadAndDecode method called...");
