@@ -161,6 +161,22 @@ public class Application
             }
         }
 
+
+        if (WikiPage.VALID.equals((wikiPage.getSourcePageValid())))
+        {
+            if (!(WikiPage.VALID.equals(wikiPage.getFullPageValid())))
+            {
+                try
+                {
+                    MediaWikiType mwt = downloadAndDecode(wikiPage.getFullPageTitle());
+                }
+                catch (Exception e)
+                {
+                    logger.error("While loading full page", e);
+                }
+            }
+        }
+
         String wikiPageAsString = ToStringBuilder.reflectionToString(wikiPage, ToStringStyle.MULTI_LINE_STYLE);
         logger.info("wikiPage is {}", wikiPageAsString);
     }
