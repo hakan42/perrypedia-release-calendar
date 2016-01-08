@@ -29,7 +29,7 @@ public class WikiPage
 
     private String sourcePageTitle;
 
-    private String sourceValid;
+    private String sourcePageValid;
 
     private String fullPageId;
 
@@ -93,14 +93,14 @@ public class WikiPage
         this.sourcePageTitle = sourcePageTitle;
     }
 
-    public String getSourceValid()
+    public String getSourcePageValid()
     {
-        return sourceValid;
+        return sourcePageValid;
     }
 
-    public void setSourceValid(String sourceValid)
+    public void setSourcePageValid(String sourcePageValid)
     {
-        this.sourceValid = sourceValid;
+        this.sourcePageValid = sourcePageValid;
     }
 
     public String getFullPageId()
