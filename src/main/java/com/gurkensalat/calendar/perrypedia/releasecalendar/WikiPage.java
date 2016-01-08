@@ -7,10 +7,16 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
+@Table(name = "WIKI_PAGE")
 public class WikiPage
 {
+    @Transient
+    public static final String VALID = "Y";
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
@@ -18,6 +24,18 @@ public class WikiPage
     private String seriesPrefix;
 
     private int issueNumber;
+
+    private String sourcePageId;
+
+    private String sourcePageTitle;
+
+    private String sourceValid;
+
+    private String fullPageId;
+
+    private String fullPageTitle;
+
+    private String fullPageValid;
 
     private String valid;
 
@@ -55,6 +73,66 @@ public class WikiPage
         this.issueNumber = issueNumber;
     }
 
+    public String getSourcePageId()
+    {
+        return sourcePageId;
+    }
+
+    public void setSourcePageId(String sourcePageId)
+    {
+        this.sourcePageId = sourcePageId;
+    }
+
+    public String getSourcePageTitle()
+    {
+        return sourcePageTitle;
+    }
+
+    public void setSourcePageTitle(String sourcePageTitle)
+    {
+        this.sourcePageTitle = sourcePageTitle;
+    }
+
+    public String getSourceValid()
+    {
+        return sourceValid;
+    }
+
+    public void setSourceValid(String sourceValid)
+    {
+        this.sourceValid = sourceValid;
+    }
+
+    public String getFullPageId()
+    {
+        return fullPageId;
+    }
+
+    public void setFullPageId(String fullPageId)
+    {
+        this.fullPageId = fullPageId;
+    }
+
+    public String getFullPageTitle()
+    {
+        return fullPageTitle;
+    }
+
+    public void setFullPageTitle(String fullPageTitle)
+    {
+        this.fullPageTitle = fullPageTitle;
+    }
+
+    public String getFullPageValid()
+    {
+        return fullPageValid;
+    }
+
+    public void setFullPageValid(String fullPageValid)
+    {
+        this.fullPageValid = fullPageValid;
+    }
+
     public String getValid()
     {
         return valid;
@@ -64,7 +142,6 @@ public class WikiPage
     {
         this.valid = valid;
     }
-
 
     /**
      * {@inheritDoc}
