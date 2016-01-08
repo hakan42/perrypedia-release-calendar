@@ -31,6 +31,7 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
 import java.io.StringReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -227,6 +228,13 @@ public class Application
         // curl 'http://www.perrypedia.proc.org/mediawiki/index.php?title=Spezial:Exportieren&action=submit' \
         // --data 'catname=&pages=Seid+ihr+wahres+Leben%3F&curonly=1&wpDownload=1'
 
+        // curl 'http://www.perrypedia.proc.org/mediawiki/index.php?title=Spezial:Exportieren&action=submit' \
+        // --data 'catname=&pages=Leticrons+S%C3%A4ule&curonly=1&wpDownload=1'
+
+        // GEHT NICHT...
+        // curl 'http://www.perrypedia.proc.org/mediawiki/index.php?title=Spezial:Exportieren&action=submit' \
+        // --data 'catname=&pages=Leticrons+S%E4ule&curonly=1&wpDownload=1'
+
 
         final String EXPORT_URL = "http://www.perrypedia.proc.org/mediawiki/index.php?title=Spezial:Exportieren&action=submit";
 
@@ -238,7 +246,8 @@ public class Application
         params.add(new BasicNameValuePair("pages", pageName));
         params.add(new BasicNameValuePair("curonly", "1"));
         params.add(new BasicNameValuePair("wpDownload", "1"));
-        httpPost.setEntity(new UrlEncodedFormEntity(params));
+
+        httpPost.setEntity(new UrlEncodedFormEntity(params, Charset.forName("UTF-8")));
 
         CloseableHttpResponse response1 = httpclient.execute(httpPost);
 
