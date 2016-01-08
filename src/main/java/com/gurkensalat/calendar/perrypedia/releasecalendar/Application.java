@@ -38,6 +38,9 @@ public class Application
     @Autowired
     private Environment environment;
 
+    @Autowired
+    private WikiPageRepository wikiPageRepository;
+
     public static void main(String[] args)
     {
         SpringApplication.run(Application.class);
@@ -65,6 +68,12 @@ public class Application
         // check Perry Rhodan Arkon next
         issuesToCheck.addAll(calculateIssues(new PerryRhodanArkonSeries(), 1, 12, start, end));
 
+        // Now, to the Perrypedia checks...
+        for (Issue issue : issuesToCheck)
+        {
+            checkIssueOnPerryPedia(issue);
+        }
+
         return null;
     }
 
@@ -83,7 +92,6 @@ public class Application
                     if (end.isAfter(issueDate))
                     {
                         Issue issue = new Issue(series, i);
-                        logger.info("Have to add issue {}", issue);
                         result.add(issue);
                     }
                 }
@@ -91,6 +99,39 @@ public class Application
         }
 
         return result;
+    }
+
+    private void checkIssueOnPerryPedia(Issue issue)
+    {
+        logger.info("Have to check issue {}", issue);
+
+        WikiPage wikiPage = findFirstWikiPage(issue);
+        // logger.debug("  Wiki Page is {}", wikiPage);
+
+        if (wikiPage == null)
+        {
+            wikiPage = new WikiPage();
+            wikiPage.setSeriesPrefix(issue.getSeries().getSourcePrefix());
+            wikiPage.setIssueNumber(issue.getNumber());
+        }
+
+        // logger.debug("    before save {}", wikiPage);
+        wikiPage = wikiPageRepository.save(wikiPage);
+        // logger.debug("    after save {}", wikiPage);
+    }
+
+
+    private WikiPage findFirstWikiPage(Issue issue)
+    {
+        WikiPage wikiPage = null;
+        List<WikiPage> wikiPages = wikiPageRepository.findBySeriesPrefixAndIssueNumber(issue.getSeries().getSourcePrefix(), issue.getNumber());
+
+        if ((wikiPages != null) && (wikiPages.size() > 0))
+        {
+            wikiPage = wikiPages.get(0);
+        }
+
+        return wikiPage;
     }
 
     // @Bean
