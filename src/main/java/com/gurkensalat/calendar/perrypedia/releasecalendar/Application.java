@@ -1,5 +1,9 @@
 package com.gurkensalat.calendar.perrypedia.releasecalendar;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -35,6 +39,8 @@ public class Application
 {
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
+    private static final String EXPORT_URL_PREFIX = "http://www.perrypedia.proc.org/wiki/Spezial:Exportieren/";
+
     @Autowired
     private Environment environment;
 
@@ -60,13 +66,13 @@ public class Application
         issuesToCheck.addAll(calculateIssues(new PerryRhodanSeries(), 2838, 2840, start, end));
 
         // check Perry Rhodan NEO next
-        issuesToCheck.addAll(calculateIssues(new PerryRhodanNeoSeries(), 110, 120, start, end));
+        // issuesToCheck.addAll(calculateIssues(new PerryRhodanNeoSeries(), 110, 120, start, end));
 
         // check Perry Rhodan NEO Story next
-        issuesToCheck.addAll(calculateIssues(new PerryRhodanNeoStorySeries(), 1, 12, start, end));
+        // issuesToCheck.addAll(calculateIssues(new PerryRhodanNeoStorySeries(), 1, 12, start, end));
 
         // check Perry Rhodan Arkon next
-        issuesToCheck.addAll(calculateIssues(new PerryRhodanArkonSeries(), 1, 12, start, end));
+        // issuesToCheck.addAll(calculateIssues(new PerryRhodanArkonSeries(), 1, 12, start, end));
 
         // Now, to the Perrypedia checks...
         for (Issue issue : issuesToCheck)
@@ -118,6 +124,46 @@ public class Application
         // logger.debug("    before save {}", wikiPage);
         wikiPage = wikiPageRepository.save(wikiPage);
         // logger.debug("    after save {}", wikiPage);
+
+        if (!(WikiPage.VALID.equals(wikiPage.getSourceValid())))
+        {
+            try
+            {
+                wikiPage.setSourcePageTitle(issue.getSeries().getSourcePrefix() + issue.getNumber());
+                wikiPage = wikiPageRepository.save(wikiPage);
+
+                String url = EXPORT_URL_PREFIX + "Quelle:" + wikiPage.getSourcePageTitle();
+                MediaWikiType mwt = downloadAndDecode(url);
+                if ((mwt.getPage() != null) && (mwt.getPage().size() > 0))
+                {
+                    PageType page = mwt.getPage().get(0);
+                    logger.info("  page: {}", page);
+                    logger.info("    id:    {}", page.getId());
+                    logger.info("    title: {}", page.getTitle());
+                    logger.info("    redir: {}", page.getRedirect().getTitle());
+
+                    wikiPage.setSourcePageId(page.getId().toString());
+                    wikiPage.setFullPageTitle(page.getRedirect().getTitle());
+
+                    if (StringUtils.isNotEmpty(wikiPage.getSourcePageId()) && StringUtils.isNotEmpty(wikiPage.getSourcePageTitle()))
+                    {
+                        if (StringUtils.isNotEmpty(wikiPage.getFullPageTitle()))
+                        {
+                            wikiPage.setSourceValid(WikiPage.VALID);
+                        }
+                    }
+
+                    wikiPage = wikiPageRepository.save(wikiPage);
+                }
+            }
+            catch (Exception e)
+            {
+                logger.error("While loading 'Quelle' page", e);
+            }
+        }
+
+        String wikiPageAsString = ToStringBuilder.reflectionToString(wikiPage, ToStringStyle.MULTI_LINE_STYLE);
+        logger.info("wikiPage is {}", wikiPageAsString);
     }
 
 
@@ -154,41 +200,42 @@ public class Application
         return null;
     }
 
-    // @Bean
-    public CommandLineRunner downloadAndDecode() throws Exception
+    private MediaWikiType downloadAndDecode(String url) throws Exception
     {
-        logger.info("downloadAndDecode method called...");
+        logger.debug("downloadAndDecode method called...");
 
         CloseableHttpClient httpclient = HttpClients.createDefault();
-        HttpGet httpGet = new HttpGet("http://www.perrypedia.proc.org/wiki/Spezial:Exportieren/Quelle:PR2837");
+        HttpGet httpGet = new HttpGet(url);
         CloseableHttpResponse response1 = httpclient.execute(httpGet);
+
+        MediaWikiType mwt = null;
 
         try
         {
-            logger.info("{}", response1.getStatusLine());
+            logger.debug("{}", response1.getStatusLine());
 
             HttpEntity entity1 = response1.getEntity();
-            logger.info("{}", entity1.getContent());
+            logger.debug("{}", entity1.getContent());
 
             // do something useful with the response body
             String data = EntityUtils.toString(entity1);
-            logger.info("{}", data);
+            logger.debug("{}", data);
 
             JAXBContext jaxbContext = JAXBContext.newInstance(MediaWikiType.class);
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 
             StreamSource source = new StreamSource(new StringReader(data));
             JAXBElement<MediaWikiType> userElement = unmarshaller.unmarshal(source, MediaWikiType.class);
-            MediaWikiType mwt = userElement.getValue();
-            logger.info("Parsed Data: {}", mwt);
+            mwt = userElement.getValue();
+            logger.debug("Parsed Data: {}", mwt);
 
-            for (PageType page : mwt.getPage())
-            {
-                logger.info("  page: {}", page);
-                logger.info("    id:    {}", page.getId());
-                logger.info("    title: {}", page.getTitle());
-                logger.info("    redir: {}", page.getRedirect().getTitle());
-            }
+            // for (PageType page : mwt.getPage())
+            // {
+            // logger.debug("  page: {}", page);
+            // logger.debug("    id:    {}", page.getId());
+            // logger.debug("    title: {}", page.getTitle());
+            // logger.debug("    redir: {}", page.getRedirect().getTitle());
+            // }
 
             // and ensure it is fully consumed
             EntityUtils.consume(entity1);
@@ -198,6 +245,6 @@ public class Application
             response1.close();
         }
 
-        return null;
+        return mwt;
     }
 }
