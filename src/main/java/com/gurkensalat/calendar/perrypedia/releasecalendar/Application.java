@@ -15,6 +15,7 @@ import org.apache.http.util.EntityUtils;
 import org.joda.time.DateTime;
 import org.mediawiki.xml.export_0.MediaWikiType;
 import org.mediawiki.xml.export_0.PageType;
+import org.mediawiki.xml.export_0.RevisionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,7 +127,7 @@ public class Application
         wikiPage = wikiPageRepository.save(wikiPage);
         // logger.debug("    after save {}", wikiPage);
 
-        if (!(WikiPage.VALID.equals(wikiPage.getSourcePageValid())))
+        if (!(WikiPage.getVALID().equals(wikiPage.getSourcePageValid())))
         {
             try
             {
@@ -149,7 +150,7 @@ public class Application
                     {
                         if (StringUtils.isNotEmpty(wikiPage.getFullPageTitle()))
                         {
-                            wikiPage.setSourcePageValid(WikiPage.VALID);
+                            wikiPage.setSourcePageValid(WikiPage.getVALID());
                         }
                     }
 
@@ -163,13 +164,38 @@ public class Application
         }
 
 
-        if (WikiPage.VALID.equals((wikiPage.getSourcePageValid())))
+        if (WikiPage.getVALID().equals((wikiPage.getSourcePageValid())))
         {
-            if (!(WikiPage.VALID.equals(wikiPage.getFullPageValid())))
+            if (!(WikiPage.getVALID().equals(wikiPage.getFullPageValid())))
             {
                 try
                 {
                     MediaWikiType mwt = downloadAndDecode(wikiPage.getFullPageTitle());
+                    if ((mwt.getPage() != null) && (mwt.getPage().size() > 0))
+                    {
+                        PageType page = mwt.getPage().get(0);
+                        logger.info("  page: {}", page);
+                        logger.info("    id:    {}", page.getId());
+
+                        wikiPage.setFullPageId(page.getId().toString());
+                        wikiPage.setFullPageTitle(page.getTitle());
+
+                        if (StringUtils.isNotEmpty(wikiPage.getFullPageId()) && StringUtils.isNotEmpty(wikiPage.getFullPageId()))
+                        {
+                            if ((page.getRevisionOrUpload() != null) && (page.getRevisionOrUpload().size() > 0))
+                            {
+                                RevisionType revision = (RevisionType) page.getRevisionOrUpload().get(0);
+                                wikiPage.setFullPageText(revision.getText().getValue());
+                            }
+                        }
+
+                        if (StringUtils.isNotEmpty(wikiPage.getFullPageText()))
+                        {
+                            wikiPage.setFullPageValid(wikiPage.getVALID());
+                        }
+
+                        wikiPage = wikiPageRepository.save(wikiPage);
+                    }
                 }
                 catch (Exception e)
                 {

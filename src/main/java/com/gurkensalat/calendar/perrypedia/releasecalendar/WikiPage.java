@@ -3,6 +3,7 @@ package com.gurkensalat.calendar.perrypedia.releasecalendar;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -15,7 +16,7 @@ import javax.persistence.Transient;
 public class WikiPage
 {
     @Transient
-    public static final String VALID = "Y";
+    private static final String VALID = "Y";
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -37,10 +38,18 @@ public class WikiPage
 
     private String fullPageValid;
 
+    @Column(name = "FULL_PAGE_TEXT", length = 8192)
+    private String fullPageText;
+
     private String valid;
 
     public WikiPage()
     {
+    }
+
+    public static String getVALID()
+    {
+        return VALID;
     }
 
     public long getId()
@@ -131,6 +140,16 @@ public class WikiPage
     public void setFullPageValid(String fullPageValid)
     {
         this.fullPageValid = fullPageValid;
+    }
+
+    public String getFullPageText()
+    {
+        return fullPageText;
+    }
+
+    public void setFullPageText(String fullPageText)
+    {
+        this.fullPageText = fullPageText;
     }
 
     public String getValid()
