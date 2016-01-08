@@ -1,14 +1,16 @@
 package com.gurkensalat.calendar.perrypedia.releasecalendar;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.joda.time.DateTime;
 import org.mediawiki.xml.export_0.MediaWikiType;
@@ -38,8 +40,6 @@ import java.util.List;
 public class Application
 {
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
-
-    private static final String EXPORT_URL_PREFIX = "http://www.perrypedia.proc.org/wiki/Spezial:Exportieren/";
 
     @Autowired
     private Environment environment;
@@ -125,15 +125,14 @@ public class Application
         wikiPage = wikiPageRepository.save(wikiPage);
         // logger.debug("    after save {}", wikiPage);
 
-        if (!(WikiPage.VALID.equals(wikiPage.getSourceValid())))
+        if (!(WikiPage.VALID.equals(wikiPage.getSourcePageValid())))
         {
             try
             {
-                wikiPage.setSourcePageTitle(issue.getSeries().getSourcePrefix() + issue.getNumber());
+                wikiPage.setSourcePageTitle("Quelle:" + issue.getSeries().getSourcePrefix() + issue.getNumber());
                 wikiPage = wikiPageRepository.save(wikiPage);
 
-                String url = EXPORT_URL_PREFIX + "Quelle:" + wikiPage.getSourcePageTitle();
-                MediaWikiType mwt = downloadAndDecode(url);
+                MediaWikiType mwt = downloadAndDecode(wikiPage.getSourcePageTitle());
                 if ((mwt.getPage() != null) && (mwt.getPage().size() > 0))
                 {
                     PageType page = mwt.getPage().get(0);
@@ -149,7 +148,7 @@ public class Application
                     {
                         if (StringUtils.isNotEmpty(wikiPage.getFullPageTitle()))
                         {
-                            wikiPage.setSourceValid(WikiPage.VALID);
+                            wikiPage.setSourcePageValid(WikiPage.VALID);
                         }
                     }
 
@@ -200,13 +199,32 @@ public class Application
         return null;
     }
 
-    private MediaWikiType downloadAndDecode(String url) throws Exception
+    private MediaWikiType downloadAndDecode(String pageName) throws Exception
     {
-        logger.debug("downloadAndDecode method called...");
+        logger.debug("downloadAndDecode '{}'", pageName);
+
+        // String url = "http://www.perrypedia.proc.org/mediawiki/index.php?title=Spezial:Exportieren&action=submit";
+
+        // curl 'http://www.perrypedia.proc.org/mediawiki/index.php?title=Spezial:Exportieren&action=submit' \
+        // --data 'catname=&pages=Quelle:PRN111&curonly=1&wpDownload=1'
+
+        // curl 'http://www.perrypedia.proc.org/mediawiki/index.php?title=Spezial:Exportieren&action=submit' \
+        // --data 'catname=&pages=Seid+ihr+wahres+Leben%3F&curonly=1&wpDownload=1'
+
+
+        final String EXPORT_URL = "http://www.perrypedia.proc.org/mediawiki/index.php?title=Spezial:Exportieren&action=submit";
 
         CloseableHttpClient httpclient = HttpClients.createDefault();
-        HttpGet httpGet = new HttpGet(url);
-        CloseableHttpResponse response1 = httpclient.execute(httpGet);
+        // HttpGet httpGet = new HttpGet(url);
+        HttpPost httpPost = new HttpPost(EXPORT_URL);
+        List<NameValuePair> params = new ArrayList<NameValuePair>();
+        params.add(new BasicNameValuePair("catname", ""));
+        params.add(new BasicNameValuePair("pages", pageName));
+        params.add(new BasicNameValuePair("curonly", "1"));
+        params.add(new BasicNameValuePair("wpDownload", "1"));
+        httpPost.setEntity(new UrlEncodedFormEntity(params));
+
+        CloseableHttpResponse response1 = httpclient.execute(httpPost);
 
         MediaWikiType mwt = null;
 
@@ -215,7 +233,7 @@ public class Application
             logger.debug("{}", response1.getStatusLine());
 
             HttpEntity entity1 = response1.getEntity();
-            logger.debug("{}", entity1.getContent());
+            // logger.debug("{}", entity1.getContent());
 
             // do something useful with the response body
             String data = EntityUtils.toString(entity1);
