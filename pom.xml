@@ -25,6 +25,7 @@
         <maven-source-plugin.version>2.4</maven-source-plugin.version>
         <maven-surefire-plugin.version>2.19</maven-surefire-plugin.version>
         <maven-jaxb2-plugin.version>0.13.1</maven-jaxb2-plugin.version>
+        <jacoco-plugin.version>0.7.5.201505241946</jacoco-plugin.version>
         <fluido-skin.version>1.4</fluido-skin.version>
         <versions-maven-plugin.version>2.2</versions-maven-plugin.version>
 
@@ -375,6 +376,27 @@
                         </execution>
                     </executions>
                 </plugin>
+
+                <!-- For codecov.io. -->
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>${jacoco-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>report</id>
+                            <phase>test</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
 
@@ -387,6 +409,11 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
             </plugin>
         </plugins>
     </build>
