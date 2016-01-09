@@ -79,7 +79,7 @@
     </issueManagement>
 
     <ciManagement>
-        <system>Jenkins</system>
+        <system>Travis</system>
     </ciManagement>
 
     <distributionManagement>
