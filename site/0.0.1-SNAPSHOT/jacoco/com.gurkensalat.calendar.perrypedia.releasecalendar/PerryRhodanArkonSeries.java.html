@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>PerryRhodanArkonSeries.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">perrypedia-release-calendar</a> &gt; <a href="index.source.html" class="el_package">com.gurkensalat.calendar.perrypedia.releasecalendar</a> &gt; <span class="el_source">PerryRhodanArkonSeries.java</span></div><h1>PerryRhodanArkonSeries.java</h1><pre class="source lang-java linenums">package com.gurkensalat.calendar.perrypedia.releasecalendar;
+
+import org.joda.time.DateTime;
+
+<span class="fc" id="L5">public class PerryRhodanArkonSeries extends AbstractSeries</span>
+{
+    // PRAR 1 - 22.1.2016
+<span class="fc" id="L8">    private static final DateTime RELEASE_OF_ISSUE_1 = new DateTime().withDate(2016, 1, 22).withMillisOfDay(0);</span>
+
+    // PRAR 1 - Freitag, 22. Januar 2016
+    private static DateTime releaseOfFirstIssue;
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getDaysPerIssue()
+    {
+<span class="fc" id="L18">        return 14;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public int getMaxIssues()
+    {
+<span class="fc" id="L26">        return 12;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public DateTime getFirstIssueReleaseDate()
+    {
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">        if (releaseOfFirstIssue == null)</span>
+        {
+<span class="fc" id="L36">            releaseOfFirstIssue = getIssueReleaseDate(1);</span>
+        }
+
+<span class="fc" id="L39">        return releaseOfFirstIssue;</span>
+    }
+
+    public DateTime getFixedReleaseDate()
+    {
+<span class="fc" id="L44">        return RELEASE_OF_ISSUE_1;</span>
+    }
+
+    public int getFixedReleaseIssue()
+    {
+<span class="fc" id="L49">        return 1;</span>
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String getSourcePrefix()
+    {
+<span class="nc" id="L58">        return &quot;PRAR&quot;;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

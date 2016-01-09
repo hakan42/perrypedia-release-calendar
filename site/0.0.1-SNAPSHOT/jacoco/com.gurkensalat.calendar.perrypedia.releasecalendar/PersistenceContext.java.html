@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>PersistenceContext.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">perrypedia-release-calendar</a> &gt; <a href="index.source.html" class="el_package">com.gurkensalat.calendar.perrypedia.releasecalendar</a> &gt; <span class="el_source">PersistenceContext.java</span></div><h1>PersistenceContext.java</h1><pre class="source lang-java linenums">package com.gurkensalat.calendar.perrypedia.releasecalendar;
+
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import javax.sql.DataSource;
+import java.util.Properties;
+
+@Configuration
+@EnableTransactionManagement
+<span class="nc" id="L15">public class PersistenceContext</span>
+{
+    @Value(&quot;${spring.datasource.username}&quot;)
+    private String user;
+
+    @Value(&quot;${spring.datasource.password}&quot;)
+    private String password;
+
+    @Value(&quot;${spring.datasource.url}&quot;)
+    private String dataSourceUrl;
+
+    @Value(&quot;${spring.datasource.driverClassName}&quot;)
+    private String driverClassName;
+
+    @Value(&quot;${spring.datasource.connectionTestQuery}&quot;)
+    private String connectionTestQuery;
+
+    @Bean(destroyMethod = &quot;close&quot;)
+    public DataSource dataSource()
+    {
+<span class="nc" id="L35">        Properties dsProps = new Properties();</span>
+<span class="nc" id="L36">        dsProps.setProperty(&quot;url&quot;, dataSourceUrl);</span>
+<span class="nc" id="L37">        dsProps.setProperty(&quot;user&quot;, user);</span>
+<span class="nc" id="L38">        dsProps.setProperty(&quot;password&quot;, password);</span>
+
+<span class="nc" id="L40">        Properties configProps = new Properties();</span>
+<span class="nc" id="L41">        configProps.setProperty(&quot;connectionTestQuery&quot;, connectionTestQuery);</span>
+<span class="nc" id="L42">        configProps.setProperty(&quot;driverClassName&quot;, driverClassName);</span>
+<span class="nc" id="L43">        configProps.setProperty(&quot;jdbcUrl&quot;, dataSourceUrl);</span>
+
+<span class="nc" id="L45">        HikariConfig hc = new HikariConfig(configProps);</span>
+<span class="nc" id="L46">        hc.setDataSourceProperties(dsProps);</span>
+<span class="nc" id="L47">        return new HikariDataSource(hc);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>
