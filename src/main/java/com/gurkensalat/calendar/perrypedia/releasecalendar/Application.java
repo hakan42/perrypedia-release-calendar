@@ -108,26 +108,29 @@ public class Application
                 VEvent event = convertToIcalEvent(issue, wikiPage);
                 if (event != null)
                 {
-                    allEvents.put(issue.getReleaseDate().toString(), event);
+                    String key = issue.getReleaseDate().toString();
+                    key = issue.getSeries().getSourcePrefix() + issue.getNumber();
+
+                    allEvents.put(key, event);
 
                     if (perryRhodanSeries.getSourcePrefix().equals(issue.getSeries().getSourcePrefix()))
                     {
-                        perryRhodanEvents.put(issue.getReleaseDate().toString(), event);
+                        perryRhodanEvents.put(key, event);
                     }
 
                     if (perryRhodanNeoSeries.getSourcePrefix().equals(issue.getSeries().getSourcePrefix()))
                     {
-                        perryRhodanNeoEvents.put(issue.getReleaseDate().toString(), event);
+                        perryRhodanNeoEvents.put(key, event);
                     }
 
                     if (perryRhodanNeoStorySeries.getSourcePrefix().equals(issue.getSeries().getSourcePrefix()))
                     {
-                        perryRhodanNeoStoryEvents.put(issue.getReleaseDate().toString(), event);
+                        perryRhodanNeoStoryEvents.put(key, event);
                     }
 
                     if (perryRhodanArkonSeries.getSourcePrefix().equals(issue.getSeries().getSourcePrefix()))
                     {
-                        perryRhodanArkonEvents.put(issue.getReleaseDate().toString(), event);
+                        perryRhodanArkonEvents.put(key, event);
                     }
                 }
             }
@@ -410,7 +413,7 @@ public class Application
 
         result.setUid(wikiPage.getSeriesPrefix() + wikiPage.getIssueNumber());
         result.setSummary(wikiPage.getSeriesPrefix() + wikiPage.getIssueNumber() + ": " + wikiPage.getFullPageTitle());
-        int startOffset = issue.getSeries().getSourcePrefix().length() * 5;
+        int startOffset = issue.getSeries().getSourcePrefix().length() * 2 * 5;
         result.setDateStart(issue.getReleaseDate().plusMinutes(startOffset).toDate());
         result.setDateEnd(issue.getReleaseDate().plusMinutes(startOffset + 5).toDate());
 
