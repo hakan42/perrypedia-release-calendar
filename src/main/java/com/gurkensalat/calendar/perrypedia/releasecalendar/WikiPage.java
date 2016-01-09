@@ -41,8 +41,6 @@ public class WikiPage
     @Column(name = "FULL_PAGE_TEXT", length = 8192)
     private String fullPageText;
 
-    private String valid;
-
     public WikiPage()
     {
     }
@@ -152,16 +150,6 @@ public class WikiPage
         this.fullPageText = fullPageText;
     }
 
-    public String getValid()
-    {
-        return valid;
-    }
-
-    public void setValid(String valid)
-    {
-        this.valid = valid;
-    }
-
     /**
      * {@inheritDoc}
      */
@@ -173,7 +161,6 @@ public class WikiPage
                 .append("id", getId())
                 .append("seriesPrefix", getSeriesPrefix())
                 .append("number", getIssueNumber())
-                .append("valid", getValid())
                 .toString();
         // @formatter:on
     }

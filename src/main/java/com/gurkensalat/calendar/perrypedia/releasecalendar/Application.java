@@ -255,7 +255,7 @@ public class Application
                                     {
                                         text = text.substring(0, startMacroPostfix);
 
-                                        wikiPage.setFullPageValid(wikiPage.getValid());
+                                        wikiPage.setFullPageValid(WikiPage.getVALID());
                                         wikiPage.setFullPageText(text);
                                     }
                                 }
@@ -270,7 +270,7 @@ public class Application
                                     {
                                         text = text.substring(0, startMacroPostfix);
 
-                                        wikiPage.setFullPageValid(wikiPage.getValid());
+                                        wikiPage.setFullPageValid(WikiPage.getVALID());
                                         wikiPage.setFullPageText(text);
                                     }
                                 }
