@@ -43,6 +43,10 @@ public class Application
 {
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
+    private static final String MACRO_PREFIX_ROMAN = "{{Roman";
+    private static final String MACRO_PREFIX_HANDLUNGSZUSAMMENFASSUNG = "{{Handlungszusammenfassung";
+    private static final String MACRO_POSTFIX = "}}";
+
     @Autowired
     private Environment environment;
 
@@ -65,16 +69,16 @@ public class Application
         List<Issue> issuesToCheck = new ArrayList<Issue>();
 
         // check Perry Rhodan Classic first
-        issuesToCheck.addAll(calculateIssues(new PerryRhodanSeries(), 2838, 2840, start, end));
+        issuesToCheck.addAll(calculateIssues(new PerryRhodanSeries(), 2838, 2860, start, end));
 
         // check Perry Rhodan NEO next
-        // issuesToCheck.addAll(calculateIssues(new PerryRhodanNeoSeries(), 110, 120, start, end));
+        issuesToCheck.addAll(calculateIssues(new PerryRhodanNeoSeries(), 110, 120, start, end));
 
         // check Perry Rhodan NEO Story next
-        // issuesToCheck.addAll(calculateIssues(new PerryRhodanNeoStorySeries(), 1, 12, start, end));
+        issuesToCheck.addAll(calculateIssues(new PerryRhodanNeoStorySeries(), 1, 12, start, end));
 
         // check Perry Rhodan Arkon next
-        // issuesToCheck.addAll(calculateIssues(new PerryRhodanArkonSeries(), 1, 12, start, end));
+        issuesToCheck.addAll(calculateIssues(new PerryRhodanArkonSeries(), 1, 12, start, end));
 
         // Now, to the Perrypedia checks...
         for (Issue issue : issuesToCheck)
@@ -163,7 +167,6 @@ public class Application
             }
         }
 
-
         if (WikiPage.getVALID().equals((wikiPage.getSourcePageValid())))
         {
             if (!(WikiPage.getVALID().equals(wikiPage.getFullPageValid())))
@@ -179,20 +182,52 @@ public class Application
 
                         wikiPage.setFullPageId(page.getId().toString());
                         wikiPage.setFullPageTitle(page.getTitle());
+                        wikiPage.setFullPageText(null);
 
                         if (StringUtils.isNotEmpty(wikiPage.getFullPageId()) && StringUtils.isNotEmpty(wikiPage.getFullPageId()))
                         {
                             if ((page.getRevisionOrUpload() != null) && (page.getRevisionOrUpload().size() > 0))
                             {
                                 RevisionType revision = (RevisionType) page.getRevisionOrUpload().get(0);
-                                wikiPage.setFullPageText(revision.getText().getValue());
+
+                                String text = revision.getText().getValue();
+                                int startMacroPrefixRoman = text.indexOf(MACRO_PREFIX_ROMAN);
+                                if (startMacroPrefixRoman > -1)
+                                {
+                                    text = text.substring(startMacroPrefixRoman);
+
+                                    int startMacroPostfix = text.indexOf(MACRO_POSTFIX);
+                                    if (startMacroPostfix > -1)
+                                    {
+                                        text = text.substring(0, startMacroPostfix);
+
+                                        wikiPage.setFullPageValid(wikiPage.getValid());
+                                        wikiPage.setFullPageText(text);
+                                    }
+                                }
+
+                                int startMacroPrefixNeo = text.indexOf(MACRO_PREFIX_HANDLUNGSZUSAMMENFASSUNG);
+                                if (startMacroPrefixNeo > -1)
+                                {
+                                    text = text.substring(startMacroPrefixNeo);
+
+                                    int startMacroPostfix = text.indexOf(MACRO_POSTFIX);
+                                    if (startMacroPostfix > -1)
+                                    {
+                                        text = text.substring(0, startMacroPostfix);
+
+                                        wikiPage.setFullPageValid(wikiPage.getValid());
+                                        wikiPage.setFullPageText(text);
+                                    }
+                                }
+
                             }
                         }
 
-                        if (StringUtils.isNotEmpty(wikiPage.getFullPageText()))
-                        {
-                            wikiPage.setFullPageValid(wikiPage.getVALID());
-                        }
+                        // if (StringUtils.isNotEmpty(wikiPage.getFullPageText()))
+                        // {
+                        // wikiPage.setFullPageValid(wikiPage.getVALID());
+                        // }
 
                         wikiPage = wikiPageRepository.save(wikiPage);
                     }
@@ -288,7 +323,7 @@ public class Application
 
             // do something useful with the response body
             String data = EntityUtils.toString(entity1);
-            logger.debug("{}", data);
+            // logger.debug("{}", data);
 
             JAXBContext jaxbContext = JAXBContext.newInstance(MediaWikiType.class);
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
@@ -296,7 +331,7 @@ public class Application
             StreamSource source = new StreamSource(new StringReader(data));
             JAXBElement<MediaWikiType> userElement = unmarshaller.unmarshal(source, MediaWikiType.class);
             mwt = userElement.getValue();
-            logger.debug("Parsed Data: {}", mwt);
+            // logger.debug("Parsed Data: {}", mwt);
 
             // for (PageType page : mwt.getPage())
             // {
