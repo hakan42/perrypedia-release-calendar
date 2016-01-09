@@ -1,5 +1,12 @@
 package com.gurkensalat.calendar.perrypedia.releasecalendar;
 
+import biweekly.Biweekly;
+import biweekly.ICalVersion;
+import biweekly.ICalendar;
+import biweekly.component.VEvent;
+import biweekly.io.text.ICalWriter;
+import biweekly.property.Categories;
+import biweekly.property.ProductId;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -31,10 +38,13 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
+import java.io.File;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 @SpringBootApplication
 @EntityScan
@@ -69,22 +79,66 @@ public class Application
         List<Issue> issuesToCheck = new ArrayList<Issue>();
 
         // check Perry Rhodan Classic first
-        issuesToCheck.addAll(calculateIssues(new PerryRhodanSeries(), 2838, 2860, start, end));
+        Series perryRhodanSeries = new PerryRhodanSeries();
+        Map<String, VEvent> perryRhodanEvents = new TreeMap<String, VEvent>();
+        issuesToCheck.addAll(calculateIssues(perryRhodanSeries, 2838, 2860, start, end));
 
         // check Perry Rhodan NEO next
-        issuesToCheck.addAll(calculateIssues(new PerryRhodanNeoSeries(), 110, 120, start, end));
+        Series perryRhodanNeoSeries = new PerryRhodanNeoSeries();
+        Map<String, VEvent> perryRhodanNeoEvents = new TreeMap<String, VEvent>();
+        issuesToCheck.addAll(calculateIssues(perryRhodanNeoSeries, 110, 120, start, end));
 
         // check Perry Rhodan NEO Story next
-        issuesToCheck.addAll(calculateIssues(new PerryRhodanNeoStorySeries(), 1, 12, start, end));
+        Series perryRhodanNeoStorySeries = new PerryRhodanNeoStorySeries();
+        Map<String, VEvent> perryRhodanNeoStoryEvents = new TreeMap<String, VEvent>();
+        issuesToCheck.addAll(calculateIssues(perryRhodanNeoStorySeries, 1, 12, start, end));
 
         // check Perry Rhodan Arkon next
-        issuesToCheck.addAll(calculateIssues(new PerryRhodanArkonSeries(), 1, 12, start, end));
+        Series perryRhodanArkonSeries = new PerryRhodanArkonSeries();
+        Map<String, VEvent> perryRhodanArkonEvents = new TreeMap<String, VEvent>();
+        issuesToCheck.addAll(calculateIssues(perryRhodanArkonSeries, 1, 12, start, end));
 
         // Now, to the Perrypedia checks...
+        Map<String, VEvent> allEvents = new TreeMap<String, VEvent>();
         for (Issue issue : issuesToCheck)
         {
-            checkIssueOnPerryPedia(issue);
+            WikiPage wikiPage = checkIssueOnPerryPedia(issue);
+            if (WikiPage.getVALID().equals(wikiPage.getFullPageValid()))
+            {
+                VEvent event = convertToIcalEvent(issue, wikiPage);
+                if (event != null)
+                {
+                    allEvents.put(issue.getReleaseDate().toString(), event);
+
+                    if (perryRhodanSeries.getSourcePrefix().equals(issue.getSeries().getSourcePrefix()))
+                    {
+                        perryRhodanEvents.put(issue.getReleaseDate().toString(), event);
+                    }
+
+                    if (perryRhodanNeoSeries.getSourcePrefix().equals(issue.getSeries().getSourcePrefix()))
+                    {
+                        perryRhodanNeoEvents.put(issue.getReleaseDate().toString(), event);
+                    }
+
+                    if (perryRhodanNeoStorySeries.getSourcePrefix().equals(issue.getSeries().getSourcePrefix()))
+                    {
+                        perryRhodanNeoStoryEvents.put(issue.getReleaseDate().toString(), event);
+                    }
+
+                    if (perryRhodanArkonSeries.getSourcePrefix().equals(issue.getSeries().getSourcePrefix()))
+                    {
+                        perryRhodanArkonEvents.put(issue.getReleaseDate().toString(), event);
+                    }
+                }
+            }
         }
+
+        // Finally, create the iCal file
+        saveIcal(allEvents, "All");
+        saveIcal(perryRhodanEvents, perryRhodanSeries.getSourcePrefix());
+        saveIcal(perryRhodanNeoEvents, perryRhodanNeoSeries.getSourcePrefix());
+        saveIcal(perryRhodanNeoStoryEvents, perryRhodanNeoStorySeries.getSourcePrefix());
+        saveIcal(perryRhodanArkonEvents, perryRhodanArkonSeries.getSourcePrefix());
 
         return null;
     }
@@ -113,7 +167,7 @@ public class Application
         return result;
     }
 
-    private void checkIssueOnPerryPedia(Issue issue)
+    private WikiPage checkIssueOnPerryPedia(Issue issue)
     {
         logger.info("Have to check issue {}", issue);
 
@@ -241,8 +295,9 @@ public class Application
 
         String wikiPageAsString = ToStringBuilder.reflectionToString(wikiPage, ToStringStyle.MULTI_LINE_STYLE);
         logger.info("wikiPage is {}", wikiPageAsString);
-    }
 
+        return wikiPage;
+    }
 
     private WikiPage findFirstWikiPage(Issue issue)
     {
@@ -255,26 +310,6 @@ public class Application
         }
 
         return wikiPage;
-    }
-
-    // @Bean
-    public CommandLineRunner seriesCalculator() throws Exception
-    {
-        logger.info("seriesCalculator method called...");
-
-        Series classic = new PerryRhodanSeries();
-        logger.info("Series {}", classic);
-
-        Series neo = new PerryRhodanNeoSeries();
-        logger.info("Series {}", neo);
-
-        Series neoStory = new PerryRhodanNeoStorySeries();
-        logger.info("Series {}", neoStory);
-
-        Series arkon = new PerryRhodanArkonSeries();
-        logger.info("Series {}", arkon);
-
-        return null;
     }
 
     private MediaWikiType downloadAndDecode(String pageName) throws Exception
@@ -350,5 +385,91 @@ public class Application
         }
 
         return mwt;
+    }
+
+    private VEvent convertToIcalEvent(Issue issue, WikiPage wikiPage)
+    {
+        VEvent result = new VEvent();
+
+        // BEGIN:VEVENT
+        // DTSTART:20160120T030000
+        // DTEND:20160120T040000
+        // SUMMARY:Marvel's Agent Carter 2x2 - A View in the Dark
+        // DESCRIPTION:Coming Soon...
+        // URL:
+        // UID:MARVELSAGENTCARTER_2_2
+        // SEQUENCE:0
+        // DTSTAMP:20160109T114833Z
+        // TRANSP:TRANSPARENT
+        // CATEGORIES: Marvel's Agent Carter Episodes, TV Shows
+        // END:VEVENT
+
+        // logger.info("  {}", ToStringBuilder.reflectionToString(issue, ToStringStyle.MULTI_LINE_STYLE));
+
+        // logger.info("  {}", ToStringBuilder.reflectionToString(wikiPage, ToStringStyle.MULTI_LINE_STYLE));
+
+        result.setUid(wikiPage.getSeriesPrefix() + wikiPage.getIssueNumber());
+        result.setSummary(wikiPage.getSeriesPrefix() + wikiPage.getIssueNumber() + ": " + wikiPage.getFullPageTitle());
+        int startOffset = issue.getSeries().getSourcePrefix().length() * 5;
+        result.setDateStart(issue.getReleaseDate().plusMinutes(startOffset).toDate());
+        result.setDateEnd(issue.getReleaseDate().plusMinutes(startOffset + 5).toDate());
+
+        String seriesName = issue.getSeries().getClass().getSimpleName();
+        seriesName = seriesName.replace("Series", "");
+        seriesName = seriesName.replace("PerryRhodan", "Perry Rhodan ");
+        seriesName = seriesName.trim();
+
+        if ("Perry Rhodan".equals(seriesName))
+        {
+            seriesName = seriesName + " EA";
+        }
+
+        result.addCategories(new Categories(seriesName));
+
+        result.addCategories(new Categories("Perry Rhodan"));
+
+        // logger.info("  {}", ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+
+        return result;
+    }
+
+    private void saveIcal(Map<String, VEvent> events, String calendar)
+    {
+        ICalendar ical = new ICalendar();
+        // TODO obtain pom version somehow
+        String projectVersion = "0.0.1-SNAPSHOT";
+        // TODO obtain project artifact Id somehow
+        String projectArtifactId = "perrypedia-release-calendar";
+
+        ical.setProductId(new ProductId("-//Hakan Tandogan//" + projectArtifactId + " " + projectVersion + "//EN"));
+
+        for (Map.Entry<String, VEvent> entry : events.entrySet())
+        {
+            // logger.info("Have to persist {}", entry.getKey());
+            // logger.info("  Event is {}", ToStringBuilder.reflectionToString(entry.getValue(), ToStringStyle.MULTI_LINE_STYLE));
+            ical.addEvent(entry.getValue());
+        }
+
+        try
+        {
+            File file = new File("PerryRhodan-" + calendar + ".ical");
+            ICalWriter writer = null;
+            try
+            {
+                writer = new ICalWriter(file, ICalVersion.V2_0);
+                writer.write(ical);
+            }
+            finally
+            {
+                if (writer != null)
+                {
+                    writer.close();
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            logger.error("While saving calendar", e);
+        }
     }
 }
