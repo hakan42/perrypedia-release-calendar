@@ -27,9 +27,9 @@ public class PerryRhodanArkonSeriesTest
     public void testFirstIssueReleaseDate()
     {
         // PRAR 1
-        // Calculated: 2.1.2016
+        // Calculated: 21.1.2016
         // Perrypedia: Freitag, 22. Januar 2016
-        DateTime expected = new DateTime().withDate(2016, 1, 22).withMillisOfDay(0);
+        DateTime expected = new DateTime().withDate(2016, 1, 21).withMillisOfDay(0);
         DateTime actual = testable.getFirstIssueReleaseDate();
         assertEquals(expected, actual);
     }
@@ -38,9 +38,9 @@ public class PerryRhodanArkonSeriesTest
     public void testIssue2ReleaseDate()
     {
         // PRAR 2
-        // Calculated: 5. 2.2016
+        // Calculated: 4. 2.2016
         // Perrypedia: Freitag, 5. Februar 2016
-        DateTime expected = new DateTime().withDate(2016, 2, 5).withMillisOfDay(0);
+        DateTime expected = new DateTime().withDate(2016, 2, 4).withMillisOfDay(0);
         DateTime actual = testable.getIssueReleaseDate(2);
         assertEquals(expected, actual);
     }
@@ -49,9 +49,9 @@ public class PerryRhodanArkonSeriesTest
     public void testIssue12ReleaseDate()
     {
         // PRAR 12
-        // Calculated: 24. 6. 2016
+        // Calculated: 23. 6. 2016
         // Perrypedia: Unknown yet...
-        DateTime expected = new DateTime().withDate(2016, 6, 24).withMillisOfDay(0);
+        DateTime expected = new DateTime().withDate(2016, 6, 23).withMillisOfDay(0);
         DateTime actual = testable.getIssueReleaseDate(12);
         assertEquals(expected, actual);
     }
