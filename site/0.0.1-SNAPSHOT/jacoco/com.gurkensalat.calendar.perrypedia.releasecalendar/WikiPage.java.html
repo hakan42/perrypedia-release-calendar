@@ -41,126 +41,114 @@ public class WikiPage
     @Column(name = &quot;FULL_PAGE_TEXT&quot;, length = 8192)
     private String fullPageText;
 
-    private String valid;
-
     public WikiPage()
-<span class="nc" id="L47">    {</span>
-<span class="nc" id="L48">    }</span>
+<span class="nc" id="L45">    {</span>
+<span class="nc" id="L46">    }</span>
 
     public static String getVALID()
     {
-<span class="nc" id="L52">        return VALID;</span>
+<span class="nc" id="L50">        return VALID;</span>
     }
 
     public long getId()
     {
-<span class="nc" id="L57">        return id;</span>
+<span class="nc" id="L55">        return id;</span>
     }
 
     public void setId(long id)
     {
-<span class="nc" id="L62">        this.id = id;</span>
-<span class="nc" id="L63">    }</span>
+<span class="nc" id="L60">        this.id = id;</span>
+<span class="nc" id="L61">    }</span>
 
     public String getSeriesPrefix()
     {
-<span class="nc" id="L67">        return seriesPrefix;</span>
+<span class="nc" id="L65">        return seriesPrefix;</span>
     }
 
     public void setSeriesPrefix(String seriesPrefix)
     {
-<span class="nc" id="L72">        this.seriesPrefix = seriesPrefix;</span>
-<span class="nc" id="L73">    }</span>
+<span class="nc" id="L70">        this.seriesPrefix = seriesPrefix;</span>
+<span class="nc" id="L71">    }</span>
 
     public int getIssueNumber()
     {
-<span class="nc" id="L77">        return issueNumber;</span>
+<span class="nc" id="L75">        return issueNumber;</span>
     }
 
     public void setIssueNumber(int issueNumber)
     {
-<span class="nc" id="L82">        this.issueNumber = issueNumber;</span>
-<span class="nc" id="L83">    }</span>
+<span class="nc" id="L80">        this.issueNumber = issueNumber;</span>
+<span class="nc" id="L81">    }</span>
 
     public String getSourcePageId()
     {
-<span class="nc" id="L87">        return sourcePageId;</span>
+<span class="nc" id="L85">        return sourcePageId;</span>
     }
 
     public void setSourcePageId(String sourcePageId)
     {
-<span class="nc" id="L92">        this.sourcePageId = sourcePageId;</span>
-<span class="nc" id="L93">    }</span>
+<span class="nc" id="L90">        this.sourcePageId = sourcePageId;</span>
+<span class="nc" id="L91">    }</span>
 
     public String getSourcePageTitle()
     {
-<span class="nc" id="L97">        return sourcePageTitle;</span>
+<span class="nc" id="L95">        return sourcePageTitle;</span>
     }
 
     public void setSourcePageTitle(String sourcePageTitle)
     {
-<span class="nc" id="L102">        this.sourcePageTitle = sourcePageTitle;</span>
-<span class="nc" id="L103">    }</span>
+<span class="nc" id="L100">        this.sourcePageTitle = sourcePageTitle;</span>
+<span class="nc" id="L101">    }</span>
 
     public String getSourcePageValid()
     {
-<span class="nc" id="L107">        return sourcePageValid;</span>
+<span class="nc" id="L105">        return sourcePageValid;</span>
     }
 
     public void setSourcePageValid(String sourcePageValid)
     {
-<span class="nc" id="L112">        this.sourcePageValid = sourcePageValid;</span>
-<span class="nc" id="L113">    }</span>
+<span class="nc" id="L110">        this.sourcePageValid = sourcePageValid;</span>
+<span class="nc" id="L111">    }</span>
 
     public String getFullPageId()
     {
-<span class="nc" id="L117">        return fullPageId;</span>
+<span class="nc" id="L115">        return fullPageId;</span>
     }
 
     public void setFullPageId(String fullPageId)
     {
-<span class="nc" id="L122">        this.fullPageId = fullPageId;</span>
-<span class="nc" id="L123">    }</span>
+<span class="nc" id="L120">        this.fullPageId = fullPageId;</span>
+<span class="nc" id="L121">    }</span>
 
     public String getFullPageTitle()
     {
-<span class="nc" id="L127">        return fullPageTitle;</span>
+<span class="nc" id="L125">        return fullPageTitle;</span>
     }
 
     public void setFullPageTitle(String fullPageTitle)
     {
-<span class="nc" id="L132">        this.fullPageTitle = fullPageTitle;</span>
-<span class="nc" id="L133">    }</span>
+<span class="nc" id="L130">        this.fullPageTitle = fullPageTitle;</span>
+<span class="nc" id="L131">    }</span>
 
     public String getFullPageValid()
     {
-<span class="nc" id="L137">        return fullPageValid;</span>
+<span class="nc" id="L135">        return fullPageValid;</span>
     }
 
     public void setFullPageValid(String fullPageValid)
     {
-<span class="nc" id="L142">        this.fullPageValid = fullPageValid;</span>
-<span class="nc" id="L143">    }</span>
+<span class="nc" id="L140">        this.fullPageValid = fullPageValid;</span>
+<span class="nc" id="L141">    }</span>
 
     public String getFullPageText()
     {
-<span class="nc" id="L147">        return fullPageText;</span>
+<span class="nc" id="L145">        return fullPageText;</span>
     }
 
     public void setFullPageText(String fullPageText)
     {
-<span class="nc" id="L152">        this.fullPageText = fullPageText;</span>
-<span class="nc" id="L153">    }</span>
-
-    public String getValid()
-    {
-<span class="nc" id="L157">        return valid;</span>
-    }
-
-    public void setValid(String valid)
-    {
-<span class="nc" id="L162">        this.valid = valid;</span>
-<span class="nc" id="L163">    }</span>
+<span class="nc" id="L150">        this.fullPageText = fullPageText;</span>
+<span class="nc" id="L151">    }</span>
 
     /**
      * {@inheritDoc}
@@ -169,12 +157,11 @@ public class WikiPage
     public String toString()
     {
         // @formatter:off
-<span class="nc" id="L172">        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)</span>
-<span class="nc" id="L173">                .append(&quot;id&quot;, getId())</span>
-<span class="nc" id="L174">                .append(&quot;seriesPrefix&quot;, getSeriesPrefix())</span>
-<span class="nc" id="L175">                .append(&quot;number&quot;, getIssueNumber())</span>
-<span class="nc" id="L176">                .append(&quot;valid&quot;, getValid())</span>
-<span class="nc" id="L177">                .toString();</span>
+<span class="nc" id="L160">        return new ToStringBuilder(this, ToStringStyle.SHORT_PREFIX_STYLE)</span>
+<span class="nc" id="L161">                .append(&quot;id&quot;, getId())</span>
+<span class="nc" id="L162">                .append(&quot;seriesPrefix&quot;, getSeriesPrefix())</span>
+<span class="nc" id="L163">                .append(&quot;number&quot;, getIssueNumber())</span>
+<span class="nc" id="L164">                .toString();</span>
         // @formatter:on
     }
 }
