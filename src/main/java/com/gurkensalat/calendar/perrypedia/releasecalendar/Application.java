@@ -26,6 +26,7 @@ import org.mediawiki.xml.export_0.RevisionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -62,6 +63,12 @@ public class Application
 
     @Autowired
     private WikiPageRepository wikiPageRepository;
+
+    @Value("${info.build.artifact}")
+    private String projectArtifact;
+
+    @Value("${info.build.version}")
+    private String projectVersion;
 
     public static void main(String[] args)
     {
@@ -439,12 +446,8 @@ public class Application
     private void saveIcal(Map<String, VEvent> events, String calendar)
     {
         ICalendar ical = new ICalendar();
-        // TODO obtain pom version somehow
-        String projectVersion = "0.0.1-SNAPSHOT";
-        // TODO obtain project artifact Id somehow
-        String projectArtifactId = "perrypedia-release-calendar";
 
-        ical.setProductId(new ProductId("-//Hakan Tandogan//" + projectArtifactId + " " + projectVersion + "//EN"));
+        ical.setProductId(new ProductId("-//Hakan Tandogan//" + projectArtifact + " " + projectVersion + "//EN"));
 
         for (Map.Entry<String, VEvent> entry : events.entrySet())
         {
