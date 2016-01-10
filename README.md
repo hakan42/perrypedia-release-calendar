@@ -14,5 +14,10 @@ Creates an ICF calendar feed for a given part series at perrypedia.proc.org
 ## Links
 
 * Github pages: https://hakan42.github.io/perrypedia-release-calendar/
-* Maven generated site, version [1.1.0-SNAPSHOT](https://hakan42.github.io/perrypedia-release-calendar/site/1.1.0-SNAPSHOT/)
-* Maven generated site, version [1.0.0](https://hakan42.github.io/perrypedia-release-calendar/site/1.0.0/)
+
+## Maven site(s)
+
+|     |     |
+| --- | --- |
+| 1.0.0 | [1.0.0](https://hakan42.github.io/perrypedia-release-calendar/site/1.0.0/) |
+| SNAPSHOT | [1.1.0-SNAPSHOT](https://hakan42.github.io/perrypedia-release-calendar/site/1.1.0-SNAPSHOT/) |
