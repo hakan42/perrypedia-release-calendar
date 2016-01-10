@@ -1,0 +1,482 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Application.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">perrypedia-release-calendar</a> &gt; <a href="index.source.html" class="el_package">com.gurkensalat.calendar.perrypedia.releasecalendar</a> &gt; <span class="el_source">Application.java</span></div><h1>Application.java</h1><pre class="source lang-java linenums">package com.gurkensalat.calendar.perrypedia.releasecalendar;
+
+import biweekly.Biweekly;
+import biweekly.ICalVersion;
+import biweekly.ICalendar;
+import biweekly.component.VEvent;
+import biweekly.io.text.ICalWriter;
+import biweekly.property.Categories;
+import biweekly.property.ProductId;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.joda.time.DateTime;
+import org.mediawiki.xml.export_0.MediaWikiType;
+import org.mediawiki.xml.export_0.PageType;
+import org.mediawiki.xml.export_0.RevisionType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.orm.jpa.EntityScan;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
+import java.io.File;
+import java.io.StringReader;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+@SpringBootApplication
+@EntityScan
+@EnableJpaRepositories
+<span class="nc" id="L53">public class Application</span>
+{
+<span class="nc" id="L55">    private static final Logger logger = LoggerFactory.getLogger(Application.class);</span>
+
+    private static final String MACRO_PREFIX_ROMAN = &quot;{{Roman&quot;;
+    private static final String MACRO_PREFIX_HANDLUNGSZUSAMMENFASSUNG = &quot;{{Handlungszusammenfassung&quot;;
+    private static final String MACRO_POSTFIX = &quot;}}&quot;;
+
+    @Autowired
+    private Environment environment;
+
+    @Autowired
+    private WikiPageRepository wikiPageRepository;
+
+    @Value(&quot;${info.build.artifact}&quot;)
+    private String projectArtifact;
+
+    @Value(&quot;${info.build.version}&quot;)
+    private String projectVersion;
+
+    public static void main(String[] args)
+    {
+<span class="nc" id="L75">        SpringApplication.run(Application.class);</span>
+<span class="nc" id="L76">    }</span>
+
+    @Bean
+    public CommandLineRunner work() throws Exception
+    {
+        // first, calculate which issues we need to check
+
+<span class="nc" id="L83">        DateTime start = DateTime.now().minusDays(7).withMillisOfDay(0);</span>
+<span class="nc" id="L84">        DateTime end = DateTime.now().plusDays(60).withMillisOfDay(0);</span>
+
+<span class="nc" id="L86">        List&lt;Issue&gt; issuesToCheck = new ArrayList&lt;Issue&gt;();</span>
+
+        // check Perry Rhodan Classic first
+<span class="nc" id="L89">        Series perryRhodanSeries = new PerryRhodanSeries();</span>
+<span class="nc" id="L90">        Map&lt;String, VEvent&gt; perryRhodanEvents = new TreeMap&lt;String, VEvent&gt;();</span>
+<span class="nc" id="L91">        issuesToCheck.addAll(calculateIssues(perryRhodanSeries, 2838, 2860, start, end));</span>
+
+        // check Perry Rhodan NEO next
+<span class="nc" id="L94">        Series perryRhodanNeoSeries = new PerryRhodanNeoSeries();</span>
+<span class="nc" id="L95">        Map&lt;String, VEvent&gt; perryRhodanNeoEvents = new TreeMap&lt;String, VEvent&gt;();</span>
+<span class="nc" id="L96">        issuesToCheck.addAll(calculateIssues(perryRhodanNeoSeries, 110, 120, start, end));</span>
+
+        // check Perry Rhodan NEO Story next
+<span class="nc" id="L99">        Series perryRhodanNeoStorySeries = new PerryRhodanNeoStorySeries();</span>
+<span class="nc" id="L100">        Map&lt;String, VEvent&gt; perryRhodanNeoStoryEvents = new TreeMap&lt;String, VEvent&gt;();</span>
+<span class="nc" id="L101">        issuesToCheck.addAll(calculateIssues(perryRhodanNeoStorySeries, 1, 12, start, end));</span>
+
+        // check Perry Rhodan Arkon next
+<span class="nc" id="L104">        Series perryRhodanArkonSeries = new PerryRhodanArkonSeries();</span>
+<span class="nc" id="L105">        Map&lt;String, VEvent&gt; perryRhodanArkonEvents = new TreeMap&lt;String, VEvent&gt;();</span>
+<span class="nc" id="L106">        issuesToCheck.addAll(calculateIssues(perryRhodanArkonSeries, 1, 12, start, end));</span>
+
+        // Now, to the Perrypedia checks...
+<span class="nc" id="L109">        Map&lt;String, VEvent&gt; allEvents = new TreeMap&lt;String, VEvent&gt;();</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">        for (Issue issue : issuesToCheck)</span>
+        {
+<span class="nc" id="L112">            WikiPage wikiPage = checkIssueOnPerryPedia(issue);</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">            if (WikiPage.getVALID().equals(wikiPage.getFullPageValid()))</span>
+            {
+<span class="nc" id="L115">                VEvent event = convertToIcalEvent(issue, wikiPage);</span>
+<span class="nc bnc" id="L116" title="All 2 branches missed.">                if (event != null)</span>
+                {
+<span class="nc" id="L118">                    String key = issue.getReleaseDate().toString();</span>
+<span class="nc" id="L119">                    key = issue.getSeries().getSourcePrefix() + issue.getNumber();</span>
+
+<span class="nc" id="L121">                    allEvents.put(key, event);</span>
+
+<span class="nc bnc" id="L123" title="All 2 branches missed.">                    if (perryRhodanSeries.getSourcePrefix().equals(issue.getSeries().getSourcePrefix()))</span>
+                    {
+<span class="nc" id="L125">                        perryRhodanEvents.put(key, event);</span>
+                    }
+
+<span class="nc bnc" id="L128" title="All 2 branches missed.">                    if (perryRhodanNeoSeries.getSourcePrefix().equals(issue.getSeries().getSourcePrefix()))</span>
+                    {
+<span class="nc" id="L130">                        perryRhodanNeoEvents.put(key, event);</span>
+                    }
+
+<span class="nc bnc" id="L133" title="All 2 branches missed.">                    if (perryRhodanNeoStorySeries.getSourcePrefix().equals(issue.getSeries().getSourcePrefix()))</span>
+                    {
+<span class="nc" id="L135">                        perryRhodanNeoStoryEvents.put(key, event);</span>
+                    }
+
+<span class="nc bnc" id="L138" title="All 2 branches missed.">                    if (perryRhodanArkonSeries.getSourcePrefix().equals(issue.getSeries().getSourcePrefix()))</span>
+                    {
+<span class="nc" id="L140">                        perryRhodanArkonEvents.put(key, event);</span>
+                    }
+                }
+            }
+<span class="nc" id="L144">        }</span>
+
+        // Finally, create the iCal file
+<span class="nc" id="L147">        saveIcal(allEvents, &quot;All&quot;);</span>
+<span class="nc" id="L148">        saveIcal(perryRhodanEvents, perryRhodanSeries.getSourcePrefix());</span>
+<span class="nc" id="L149">        saveIcal(perryRhodanNeoEvents, perryRhodanNeoSeries.getSourcePrefix());</span>
+<span class="nc" id="L150">        saveIcal(perryRhodanNeoStoryEvents, perryRhodanNeoStorySeries.getSourcePrefix());</span>
+<span class="nc" id="L151">        saveIcal(perryRhodanArkonEvents, perryRhodanArkonSeries.getSourcePrefix());</span>
+
+<span class="nc" id="L153">        return null;</span>
+    }
+
+    private List&lt;Issue&gt; calculateIssues(Series series, int startIssue, int endIssue, DateTime start, DateTime end)
+    {
+<span class="nc" id="L158">        List&lt;Issue&gt; result = new ArrayList&lt;Issue&gt;();</span>
+
+<span class="nc bnc" id="L160" title="All 2 branches missed.">        for (int i = startIssue; i &lt; endIssue; i++)</span>
+        {
+<span class="nc" id="L162">            DateTime issueDate = series.getIssueReleaseDate(i);</span>
+
+<span class="nc bnc" id="L164" title="All 2 branches missed.">            if (issueDate != null)</span>
+            {
+<span class="nc bnc" id="L166" title="All 2 branches missed.">                if (start.isBefore(issueDate))</span>
+                {
+<span class="nc bnc" id="L168" title="All 2 branches missed.">                    if (end.isAfter(issueDate))</span>
+                    {
+<span class="nc" id="L170">                        Issue issue = new Issue(series, i);</span>
+<span class="nc" id="L171">                        result.add(issue);</span>
+                    }
+                }
+            }
+        }
+
+<span class="nc" id="L177">        return result;</span>
+    }
+
+    private WikiPage checkIssueOnPerryPedia(Issue issue)
+    {
+<span class="nc" id="L182">        logger.info(&quot;Have to check issue {}&quot;, issue);</span>
+
+<span class="nc" id="L184">        WikiPage wikiPage = findFirstWikiPage(issue);</span>
+        // logger.debug(&quot;  Wiki Page is {}&quot;, wikiPage);
+
+<span class="nc bnc" id="L187" title="All 2 branches missed.">        if (wikiPage == null)</span>
+        {
+<span class="nc" id="L189">            wikiPage = new WikiPage();</span>
+<span class="nc" id="L190">            wikiPage.setSeriesPrefix(issue.getSeries().getSourcePrefix());</span>
+<span class="nc" id="L191">            wikiPage.setIssueNumber(issue.getNumber());</span>
+        }
+
+        // logger.debug(&quot;    before save {}&quot;, wikiPage);
+<span class="nc" id="L195">        wikiPage = wikiPageRepository.save(wikiPage);</span>
+        // logger.debug(&quot;    after save {}&quot;, wikiPage);
+
+<span class="nc bnc" id="L198" title="All 2 branches missed.">        if (!(WikiPage.getVALID().equals(wikiPage.getSourcePageValid())))</span>
+        {
+            try
+            {
+<span class="nc" id="L202">                wikiPage.setSourcePageTitle(&quot;Quelle:&quot; + issue.getSeries().getSourcePrefix() + issue.getNumber());</span>
+<span class="nc" id="L203">                wikiPage = wikiPageRepository.save(wikiPage);</span>
+
+<span class="nc" id="L205">                MediaWikiType mwt = downloadAndDecode(wikiPage.getSourcePageTitle());</span>
+<span class="nc bnc" id="L206" title="All 4 branches missed.">                if ((mwt.getPage() != null) &amp;&amp; (mwt.getPage().size() &gt; 0))</span>
+                {
+<span class="nc" id="L208">                    PageType page = mwt.getPage().get(0);</span>
+<span class="nc" id="L209">                    logger.info(&quot;  page: {}&quot;, page);</span>
+<span class="nc" id="L210">                    logger.info(&quot;    id:    {}&quot;, page.getId());</span>
+<span class="nc" id="L211">                    logger.info(&quot;    title: {}&quot;, page.getTitle());</span>
+<span class="nc" id="L212">                    logger.info(&quot;    redir: {}&quot;, page.getRedirect().getTitle());</span>
+
+<span class="nc" id="L214">                    wikiPage.setSourcePageId(page.getId().toString());</span>
+<span class="nc" id="L215">                    wikiPage.setFullPageTitle(page.getRedirect().getTitle());</span>
+
+<span class="nc bnc" id="L217" title="All 4 branches missed.">                    if (StringUtils.isNotEmpty(wikiPage.getSourcePageId()) &amp;&amp; StringUtils.isNotEmpty(wikiPage.getSourcePageTitle()))</span>
+                    {
+<span class="nc bnc" id="L219" title="All 2 branches missed.">                        if (StringUtils.isNotEmpty(wikiPage.getFullPageTitle()))</span>
+                        {
+<span class="nc" id="L221">                            wikiPage.setSourcePageValid(WikiPage.getVALID());</span>
+                        }
+                    }
+
+<span class="nc" id="L225">                    wikiPage = wikiPageRepository.save(wikiPage);</span>
+                }
+            }
+<span class="nc" id="L228">            catch (Exception e)</span>
+            {
+<span class="nc" id="L230">                logger.error(&quot;While loading 'Quelle' page&quot;, e);</span>
+<span class="nc" id="L231">            }</span>
+        }
+
+<span class="nc bnc" id="L234" title="All 2 branches missed.">        if (WikiPage.getVALID().equals((wikiPage.getSourcePageValid())))</span>
+        {
+<span class="nc bnc" id="L236" title="All 2 branches missed.">            if (!(WikiPage.getVALID().equals(wikiPage.getFullPageValid())))</span>
+            {
+                try
+                {
+<span class="nc" id="L240">                    MediaWikiType mwt = downloadAndDecode(wikiPage.getFullPageTitle());</span>
+<span class="nc bnc" id="L241" title="All 4 branches missed.">                    if ((mwt.getPage() != null) &amp;&amp; (mwt.getPage().size() &gt; 0))</span>
+                    {
+<span class="nc" id="L243">                        PageType page = mwt.getPage().get(0);</span>
+<span class="nc" id="L244">                        logger.info(&quot;  page: {}&quot;, page);</span>
+<span class="nc" id="L245">                        logger.info(&quot;    id:    {}&quot;, page.getId());</span>
+
+<span class="nc" id="L247">                        wikiPage.setFullPageId(page.getId().toString());</span>
+<span class="nc" id="L248">                        wikiPage.setFullPageTitle(page.getTitle());</span>
+<span class="nc" id="L249">                        wikiPage.setFullPageText(null);</span>
+
+<span class="nc bnc" id="L251" title="All 4 branches missed.">                        if (StringUtils.isNotEmpty(wikiPage.getFullPageId()) &amp;&amp; StringUtils.isNotEmpty(wikiPage.getFullPageId()))</span>
+                        {
+<span class="nc bnc" id="L253" title="All 4 branches missed.">                            if ((page.getRevisionOrUpload() != null) &amp;&amp; (page.getRevisionOrUpload().size() &gt; 0))</span>
+                            {
+<span class="nc" id="L255">                                RevisionType revision = (RevisionType) page.getRevisionOrUpload().get(0);</span>
+
+<span class="nc" id="L257">                                String text = revision.getText().getValue();</span>
+<span class="nc" id="L258">                                int startMacroPrefixRoman = text.indexOf(MACRO_PREFIX_ROMAN);</span>
+<span class="nc bnc" id="L259" title="All 2 branches missed.">                                if (startMacroPrefixRoman &gt; -1)</span>
+                                {
+<span class="nc" id="L261">                                    text = text.substring(startMacroPrefixRoman);</span>
+
+<span class="nc" id="L263">                                    int startMacroPostfix = text.indexOf(MACRO_POSTFIX);</span>
+<span class="nc bnc" id="L264" title="All 2 branches missed.">                                    if (startMacroPostfix &gt; -1)</span>
+                                    {
+<span class="nc" id="L266">                                        text = text.substring(0, startMacroPostfix);</span>
+
+<span class="nc" id="L268">                                        wikiPage.setFullPageValid(WikiPage.getVALID());</span>
+<span class="nc" id="L269">                                        wikiPage.setFullPageText(text);</span>
+                                    }
+                                }
+
+<span class="nc" id="L273">                                int startMacroPrefixNeo = text.indexOf(MACRO_PREFIX_HANDLUNGSZUSAMMENFASSUNG);</span>
+<span class="nc bnc" id="L274" title="All 2 branches missed.">                                if (startMacroPrefixNeo &gt; -1)</span>
+                                {
+<span class="nc" id="L276">                                    text = text.substring(startMacroPrefixNeo);</span>
+
+<span class="nc" id="L278">                                    int startMacroPostfix = text.indexOf(MACRO_POSTFIX);</span>
+<span class="nc bnc" id="L279" title="All 2 branches missed.">                                    if (startMacroPostfix &gt; -1)</span>
+                                    {
+<span class="nc" id="L281">                                        text = text.substring(0, startMacroPostfix);</span>
+
+<span class="nc" id="L283">                                        wikiPage.setFullPageValid(WikiPage.getVALID());</span>
+<span class="nc" id="L284">                                        wikiPage.setFullPageText(text);</span>
+                                    }
+                                }
+
+                            }
+                        }
+
+                        // if (StringUtils.isNotEmpty(wikiPage.getFullPageText()))
+                        // {
+                        // wikiPage.setFullPageValid(wikiPage.getVALID());
+                        // }
+
+<span class="nc" id="L296">                        wikiPage = wikiPageRepository.save(wikiPage);</span>
+                    }
+                }
+<span class="nc" id="L299">                catch (Exception e)</span>
+                {
+<span class="nc" id="L301">                    logger.error(&quot;While loading full page&quot;, e);</span>
+<span class="nc" id="L302">                }</span>
+            }
+        }
+
+<span class="nc" id="L306">        String wikiPageAsString = ToStringBuilder.reflectionToString(wikiPage, ToStringStyle.MULTI_LINE_STYLE);</span>
+<span class="nc" id="L307">        logger.info(&quot;wikiPage is {}&quot;, wikiPageAsString);</span>
+
+<span class="nc" id="L309">        return wikiPage;</span>
+    }
+
+    private WikiPage findFirstWikiPage(Issue issue)
+    {
+<span class="nc" id="L314">        WikiPage wikiPage = null;</span>
+<span class="nc" id="L315">        List&lt;WikiPage&gt; wikiPages = wikiPageRepository.findBySeriesPrefixAndIssueNumber(issue.getSeries().getSourcePrefix(), issue.getNumber());</span>
+
+<span class="nc bnc" id="L317" title="All 4 branches missed.">        if ((wikiPages != null) &amp;&amp; (wikiPages.size() &gt; 0))</span>
+        {
+<span class="nc" id="L319">            wikiPage = wikiPages.get(0);</span>
+        }
+
+<span class="nc" id="L322">        return wikiPage;</span>
+    }
+
+    private MediaWikiType downloadAndDecode(String pageName) throws Exception
+    {
+<span class="nc" id="L327">        logger.debug(&quot;downloadAndDecode '{}'&quot;, pageName);</span>
+
+        // String url = &quot;http://www.perrypedia.proc.org/mediawiki/index.php?title=Spezial:Exportieren&amp;action=submit&quot;;
+
+        // curl 'http://www.perrypedia.proc.org/mediawiki/index.php?title=Spezial:Exportieren&amp;action=submit' \
+        // --data 'catname=&amp;pages=Quelle:PRN111&amp;curonly=1&amp;wpDownload=1'
+
+        // curl 'http://www.perrypedia.proc.org/mediawiki/index.php?title=Spezial:Exportieren&amp;action=submit' \
+        // --data 'catname=&amp;pages=Seid+ihr+wahres+Leben%3F&amp;curonly=1&amp;wpDownload=1'
+
+        // curl 'http://www.perrypedia.proc.org/mediawiki/index.php?title=Spezial:Exportieren&amp;action=submit' \
+        // --data 'catname=&amp;pages=Leticrons+S%C3%A4ule&amp;curonly=1&amp;wpDownload=1'
+
+        // GEHT NICHT...
+        // curl 'http://www.perrypedia.proc.org/mediawiki/index.php?title=Spezial:Exportieren&amp;action=submit' \
+        // --data 'catname=&amp;pages=Leticrons+S%E4ule&amp;curonly=1&amp;wpDownload=1'
+
+
+<span class="nc" id="L345">        final String EXPORT_URL = &quot;http://www.perrypedia.proc.org/mediawiki/index.php?title=Spezial:Exportieren&amp;action=submit&quot;;</span>
+
+<span class="nc" id="L347">        CloseableHttpClient httpclient = HttpClients.createDefault();</span>
+        // HttpGet httpGet = new HttpGet(url);
+<span class="nc" id="L349">        HttpPost httpPost = new HttpPost(EXPORT_URL);</span>
+<span class="nc" id="L350">        List&lt;NameValuePair&gt; params = new ArrayList&lt;NameValuePair&gt;();</span>
+<span class="nc" id="L351">        params.add(new BasicNameValuePair(&quot;catname&quot;, &quot;&quot;));</span>
+<span class="nc" id="L352">        params.add(new BasicNameValuePair(&quot;pages&quot;, pageName));</span>
+<span class="nc" id="L353">        params.add(new BasicNameValuePair(&quot;curonly&quot;, &quot;1&quot;));</span>
+<span class="nc" id="L354">        params.add(new BasicNameValuePair(&quot;wpDownload&quot;, &quot;1&quot;));</span>
+
+<span class="nc" id="L356">        httpPost.setEntity(new UrlEncodedFormEntity(params, Charset.forName(&quot;UTF-8&quot;)));</span>
+
+<span class="nc" id="L358">        CloseableHttpResponse response1 = httpclient.execute(httpPost);</span>
+
+<span class="nc" id="L360">        MediaWikiType mwt = null;</span>
+
+        try
+        {
+<span class="nc" id="L364">            logger.debug(&quot;{}&quot;, response1.getStatusLine());</span>
+
+<span class="nc" id="L366">            HttpEntity entity1 = response1.getEntity();</span>
+            // logger.debug(&quot;{}&quot;, entity1.getContent());
+
+            // do something useful with the response body
+<span class="nc" id="L370">            String data = EntityUtils.toString(entity1);</span>
+            // logger.debug(&quot;{}&quot;, data);
+
+<span class="nc" id="L373">            JAXBContext jaxbContext = JAXBContext.newInstance(MediaWikiType.class);</span>
+<span class="nc" id="L374">            Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();</span>
+
+<span class="nc" id="L376">            StreamSource source = new StreamSource(new StringReader(data));</span>
+<span class="nc" id="L377">            JAXBElement&lt;MediaWikiType&gt; userElement = unmarshaller.unmarshal(source, MediaWikiType.class);</span>
+<span class="nc" id="L378">            mwt = userElement.getValue();</span>
+            // logger.debug(&quot;Parsed Data: {}&quot;, mwt);
+
+            // for (PageType page : mwt.getPage())
+            // {
+            // logger.debug(&quot;  page: {}&quot;, page);
+            // logger.debug(&quot;    id:    {}&quot;, page.getId());
+            // logger.debug(&quot;    title: {}&quot;, page.getTitle());
+            // logger.debug(&quot;    redir: {}&quot;, page.getRedirect().getTitle());
+            // }
+
+            // and ensure it is fully consumed
+<span class="nc" id="L390">            EntityUtils.consume(entity1);</span>
+        }
+        finally
+        {
+<span class="nc" id="L394">            response1.close();</span>
+<span class="nc" id="L395">        }</span>
+
+<span class="nc" id="L397">        return mwt;</span>
+    }
+
+    private VEvent convertToIcalEvent(Issue issue, WikiPage wikiPage)
+    {
+<span class="nc" id="L402">        VEvent result = new VEvent();</span>
+
+        // BEGIN:VEVENT
+        // DTSTART:20160120T030000
+        // DTEND:20160120T040000
+        // SUMMARY:Marvel's Agent Carter 2x2 - A View in the Dark
+        // DESCRIPTION:Coming Soon...
+        // URL:
+        // UID:MARVELSAGENTCARTER_2_2
+        // SEQUENCE:0
+        // DTSTAMP:20160109T114833Z
+        // TRANSP:TRANSPARENT
+        // CATEGORIES: Marvel's Agent Carter Episodes, TV Shows
+        // END:VEVENT
+
+        // logger.info(&quot;  {}&quot;, ToStringBuilder.reflectionToString(issue, ToStringStyle.MULTI_LINE_STYLE));
+
+        // logger.info(&quot;  {}&quot;, ToStringBuilder.reflectionToString(wikiPage, ToStringStyle.MULTI_LINE_STYLE));
+
+<span class="nc" id="L421">        result.setUid(wikiPage.getSeriesPrefix() + wikiPage.getIssueNumber());</span>
+<span class="nc" id="L422">        result.setSummary(wikiPage.getSeriesPrefix() + wikiPage.getIssueNumber() + &quot;: &quot; + wikiPage.getFullPageTitle());</span>
+<span class="nc" id="L423">        int startOffset = issue.getSeries().getSourcePrefix().length() * 2 * 5;</span>
+<span class="nc" id="L424">        result.setDateStart(issue.getReleaseDate().plusMinutes(startOffset).toDate());</span>
+<span class="nc" id="L425">        result.setDateEnd(issue.getReleaseDate().plusMinutes(startOffset + 5).toDate());</span>
+
+<span class="nc" id="L427">        String seriesName = issue.getSeries().getClass().getSimpleName();</span>
+<span class="nc" id="L428">        seriesName = seriesName.replace(&quot;Series&quot;, &quot;&quot;);</span>
+<span class="nc" id="L429">        seriesName = seriesName.replace(&quot;PerryRhodan&quot;, &quot;Perry Rhodan &quot;);</span>
+<span class="nc" id="L430">        seriesName = seriesName.trim();</span>
+
+<span class="nc bnc" id="L432" title="All 2 branches missed.">        if (&quot;Perry Rhodan&quot;.equals(seriesName))</span>
+        {
+<span class="nc" id="L434">            seriesName = seriesName + &quot; EA&quot;;</span>
+        }
+
+<span class="nc" id="L437">        result.addCategories(new Categories(seriesName));</span>
+
+<span class="nc" id="L439">        result.addCategories(new Categories(&quot;Perry Rhodan&quot;));</span>
+
+        // logger.info(&quot;  {}&quot;, ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+
+<span class="nc" id="L443">        return result;</span>
+    }
+
+    private void saveIcal(Map&lt;String, VEvent&gt; events, String calendar)
+    {
+<span class="nc" id="L448">        ICalendar ical = new ICalendar();</span>
+
+<span class="nc" id="L450">        ical.setProductId(new ProductId(&quot;-//Hakan Tandogan//&quot; + projectArtifact + &quot; &quot; + projectVersion + &quot;//EN&quot;));</span>
+
+<span class="nc bnc" id="L452" title="All 2 branches missed.">        for (Map.Entry&lt;String, VEvent&gt; entry : events.entrySet())</span>
+        {
+            // logger.info(&quot;Have to persist {}&quot;, entry.getKey());
+            // logger.info(&quot;  Event is {}&quot;, ToStringBuilder.reflectionToString(entry.getValue(), ToStringStyle.MULTI_LINE_STYLE));
+<span class="nc" id="L456">            ical.addEvent(entry.getValue());</span>
+<span class="nc" id="L457">        }</span>
+
+        try
+        {
+<span class="nc" id="L461">            File file = new File(&quot;PerryRhodan-&quot; + calendar + &quot;.ical&quot;);</span>
+<span class="nc" id="L462">            ICalWriter writer = null;</span>
+            try
+            {
+<span class="nc" id="L465">                writer = new ICalWriter(file, ICalVersion.V2_0);</span>
+<span class="nc" id="L466">                writer.write(ical);</span>
+            }
+            finally
+            {
+<span class="nc bnc" id="L470" title="All 4 branches missed.">                if (writer != null)</span>
+                {
+<span class="nc" id="L472">                    writer.close();</span>
+                }
+            }
+        }
+<span class="nc" id="L476">        catch (Exception e)</span>
+        {
+<span class="nc" id="L478">            logger.error(&quot;While saving calendar&quot;, e);</span>
+<span class="nc" id="L479">        }</span>
+<span class="nc" id="L480">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>
