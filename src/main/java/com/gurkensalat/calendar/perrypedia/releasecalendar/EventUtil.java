@@ -36,7 +36,7 @@ public class EventUtil
         // logger.info("  {}", ToStringBuilder.reflectionToString(wikiPage, ToStringStyle.MULTI_LINE_STYLE));
 
         result.setUid(wikiPage.getSeriesPrefix() + wikiPage.getIssueNumber());
-        result.setSummary(wikiPage.getSeriesPrefix() + wikiPage.getIssueNumber() + ": " + wikiPage.getFullPageTitle());
+        result.setSummary(wikiPage.getSeriesPrefix() + " " + wikiPage.getIssueNumber() + ": " + wikiPage.getFullPageTitle());
         int startOffset = issue.getSeries().getSourcePrefix().length() * 2 * 5;
         result.setDateStart(issue.getReleaseDate().plusMinutes(startOffset).toDate());
         result.setDateEnd(issue.getReleaseDate().plusMinutes(startOffset + 5).toDate());
