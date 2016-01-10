@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>EventUtil.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">perrypedia-release-calendar</a> &gt; <a href="index.source.html" class="el_package">com.gurkensalat.calendar.perrypedia.releasecalendar</a> &gt; <span class="el_source">EventUtil.java</span></div><h1>EventUtil.java</h1><pre class="source lang-java linenums">package com.gurkensalat.calendar.perrypedia.releasecalendar;
+
+import biweekly.component.VEvent;
+import biweekly.property.Categories;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
+<span class="fc" id="L9">public class EventUtil</span>
+{
+    @Value(&quot;${info.build.artifact}&quot;)
+    private String projectArtifact;
+
+    @Value(&quot;${info.build.version}&quot;)
+    private String projectVersion;
+
+    public VEvent convertToIcalEvent(Issue issue, WikiPage wikiPage)
+    {
+<span class="fc" id="L19">        VEvent result = new VEvent();</span>
+
+        // BEGIN:VEVENT
+        // DTSTART:20160120T030000
+        // DTEND:20160120T040000
+        // SUMMARY:Marvel's Agent Carter 2x2 - A View in the Dark
+        // DESCRIPTION:Coming Soon...
+        // URL:
+        // UID:MARVELSAGENTCARTER_2_2
+        // SEQUENCE:0
+        // DTSTAMP:20160109T114833Z
+        // TRANSP:TRANSPARENT
+        // CATEGORIES: Marvel's Agent Carter Episodes, TV Shows
+        // END:VEVENT
+
+        // logger.info(&quot;  {}&quot;, ToStringBuilder.reflectionToString(issue, ToStringStyle.MULTI_LINE_STYLE));
+
+        // logger.info(&quot;  {}&quot;, ToStringBuilder.reflectionToString(wikiPage, ToStringStyle.MULTI_LINE_STYLE));
+
+<span class="fc" id="L38">        result.setUid(wikiPage.getSeriesPrefix() + wikiPage.getIssueNumber());</span>
+<span class="fc" id="L39">        result.setSummary(wikiPage.getSeriesPrefix() + &quot; &quot; + wikiPage.getIssueNumber() + &quot;: &quot; + wikiPage.getFullPageTitle());</span>
+<span class="fc" id="L40">        int startOffset = issue.getSeries().getSourcePrefix().length() * 2 * 5;</span>
+<span class="fc" id="L41">        result.setDateStart(issue.getReleaseDate().plusMinutes(startOffset).toDate());</span>
+<span class="fc" id="L42">        result.setDateEnd(issue.getReleaseDate().plusMinutes(startOffset + 5).toDate());</span>
+
+<span class="fc" id="L44">        String seriesName = issue.getSeries().getClass().getSimpleName();</span>
+<span class="fc" id="L45">        seriesName = seriesName.replace(&quot;Series&quot;, &quot;&quot;);</span>
+<span class="fc" id="L46">        seriesName = seriesName.replace(&quot;PerryRhodan&quot;, &quot;Perry Rhodan &quot;);</span>
+<span class="fc" id="L47">        seriesName = seriesName.trim();</span>
+
+<span class="pc bpc" id="L49" title="1 of 2 branches missed.">        if (&quot;Perry Rhodan&quot;.equals(seriesName))</span>
+        {
+<span class="fc" id="L51">            seriesName = seriesName + &quot; EA&quot;;</span>
+        }
+
+<span class="fc" id="L54">        result.addCategories(new Categories(seriesName));</span>
+
+<span class="fc" id="L56">        result.addCategories(new Categories(&quot;Perry Rhodan&quot;));</span>
+
+        // logger.info(&quot;  {}&quot;, ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
+
+<span class="fc" id="L60">        return result;</span>
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>
