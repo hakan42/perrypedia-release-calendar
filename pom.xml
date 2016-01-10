@@ -81,6 +81,7 @@
 
     <ciManagement>
         <system>Travis</system>
+        <url>https://travis-ci.org/hakan42/${project.artifactId}</url>
     </ciManagement>
 
     <distributionManagement>
