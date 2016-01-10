@@ -12,5 +12,7 @@ Creates an ICF calendar feed for a given part series at perrypedia.proc.org
 | License | [![Apache License 2.0](https://img.shields.io/badge/license-Apache%202.0-brightgreen.svg?style=flat)](https://www.tldrlegal.com/l/apache2) |
 
 ## Links
+
 * Github pages: https://hakan42.github.io/perrypedia-release-calendar/
-* Maven generated site, version [0.0.1-SNAPSHOT](https://hakan42.github.io/perrypedia-release-calendar/site/0.0.1-SNAPSHOT/)
+* Maven generated site, version [1.1.0-SNAPSHOT](https://hakan42.github.io/perrypedia-release-calendar/site/1.1.0-SNAPSHOT/)
+* Maven generated site, version [1.0.0](https://hakan42.github.io/perrypedia-release-calendar/site/1.0.0/)
