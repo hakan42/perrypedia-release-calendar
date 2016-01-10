@@ -1,6 +1,5 @@
 package com.gurkensalat.calendar.perrypedia.releasecalendar;
 
-import biweekly.Biweekly;
 import biweekly.ICalVersion;
 import biweekly.ICalendar;
 import biweekly.component.VEvent;
@@ -19,6 +18,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
+import org.apache.http.util.VersionInfo;
 import org.joda.time.DateTime;
 import org.mediawiki.xml.export_0.MediaWikiType;
 import org.mediawiki.xml.export_0.PageType;
@@ -344,8 +344,11 @@ public class Application
 
         final String EXPORT_URL = "http://www.perrypedia.proc.org/mediawiki/index.php?title=Spezial:Exportieren&action=submit";
 
-        CloseableHttpClient httpclient = HttpClients.createDefault();
-        // HttpGet httpGet = new HttpGet(url);
+        String userAgent = projectArtifact + "/" + projectVersion;
+        userAgent = userAgent + " " + VersionInfo.getUserAgent("Apache-HttpClient", "org.apache.http.client", getClass());
+
+        CloseableHttpClient httpclient = HttpClients.custom().setUserAgent(userAgent).build();
+
         HttpPost httpPost = new HttpPost(EXPORT_URL);
         List<NameValuePair> params = new ArrayList<NameValuePair>();
         params.add(new BasicNameValuePair("catname", ""));
