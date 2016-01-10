@@ -1,15 +1,14 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.gurkensalat.calendar</groupId>
     <artifactId>perrypedia-release-calendar</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
 
     <inceptionYear>2016</inceptionYear>
     <url>https://hakan42.github.com/perrypedia-release-calendar/</url>
-    <description></description>
+    <description />
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -72,6 +71,7 @@
         <url>https://github.com/hakan42/perrypedia-release-calendar</url>
         <connection>scm:git:https://github.com/hakan42/perrypedia-release-calendar.git</connection>
         <developerConnection>scm:git:https://github.com/hakan42/perrypedia-release-calendar.git</developerConnection>
+        <tag>HEAD</tag>
     </scm>
 
     <issueManagement>
