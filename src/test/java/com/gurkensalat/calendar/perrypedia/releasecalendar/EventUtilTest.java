@@ -1,6 +1,7 @@
 package com.gurkensalat.calendar.perrypedia.releasecalendar;
 
 import biweekly.component.VEvent;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -42,5 +43,7 @@ public class EventUtilTest
         // assertEquals(expected, actual);
 
         assertFalse("No alarm added to event", actual.getAlarms().size() == 0);
+
+        assertFalse("No URL added to event", StringUtils.isEmpty(actual.getUrl().toString()));
     }
 }
