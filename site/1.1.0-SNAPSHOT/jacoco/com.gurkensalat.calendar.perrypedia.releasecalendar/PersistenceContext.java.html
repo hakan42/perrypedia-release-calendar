@@ -2,18 +2,24 @@
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import org.h2.tools.Script;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
 import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-<span class="nc" id="L15">public class PersistenceContext</span>
+<span class="nc" id="L19">public class PersistenceContext</span>
 {
+<span class="nc" id="L21">    private static final Logger logger = LoggerFactory.getLogger(PersistenceContext.class);</span>
+
     @Value(&quot;${spring.datasource.username}&quot;)
     private String user;
 
@@ -32,19 +38,43 @@ import java.util.Properties;
     @Bean(destroyMethod = &quot;close&quot;)
     public DataSource dataSource()
     {
-<span class="nc" id="L35">        Properties dsProps = new Properties();</span>
-<span class="nc" id="L36">        dsProps.setProperty(&quot;url&quot;, dataSourceUrl);</span>
-<span class="nc" id="L37">        dsProps.setProperty(&quot;user&quot;, user);</span>
-<span class="nc" id="L38">        dsProps.setProperty(&quot;password&quot;, password);</span>
+<span class="nc" id="L41">        Properties dsProps = new Properties();</span>
+<span class="nc" id="L42">        dsProps.setProperty(&quot;url&quot;, dataSourceUrl);</span>
+<span class="nc" id="L43">        dsProps.setProperty(&quot;user&quot;, user);</span>
+<span class="nc" id="L44">        dsProps.setProperty(&quot;password&quot;, password);</span>
 
-<span class="nc" id="L40">        Properties configProps = new Properties();</span>
-<span class="nc" id="L41">        configProps.setProperty(&quot;connectionTestQuery&quot;, connectionTestQuery);</span>
-<span class="nc" id="L42">        configProps.setProperty(&quot;driverClassName&quot;, driverClassName);</span>
-<span class="nc" id="L43">        configProps.setProperty(&quot;jdbcUrl&quot;, dataSourceUrl);</span>
+<span class="nc" id="L46">        Properties configProps = new Properties();</span>
+<span class="nc" id="L47">        configProps.setProperty(&quot;connectionTestQuery&quot;, connectionTestQuery);</span>
+<span class="nc" id="L48">        configProps.setProperty(&quot;driverClassName&quot;, driverClassName);</span>
+<span class="nc" id="L49">        configProps.setProperty(&quot;jdbcUrl&quot;, dataSourceUrl);</span>
 
-<span class="nc" id="L45">        HikariConfig hc = new HikariConfig(configProps);</span>
-<span class="nc" id="L46">        hc.setDataSourceProperties(dsProps);</span>
-<span class="nc" id="L47">        return new HikariDataSource(hc);</span>
+<span class="nc" id="L51">        HikariConfig hc = new HikariConfig(configProps);</span>
+<span class="nc" id="L52">        hc.setDataSourceProperties(dsProps);</span>
+<span class="nc" id="L53">        return new HikariDataSource(hc);</span>
     }
+
+    public void exportDatabase()
+    {
+<span class="nc bnc" id="L58" title="All 2 branches missed.">        if (&quot;org.h2.Driver&quot;.equals(driverClassName))</span>
+        {
+            try
+            {
+<span class="nc" id="L62">                Connection connection = dataSource().getConnection();</span>
+
+<span class="nc" id="L64">                String filename = dataSourceUrl.substring(&quot;jdbc:h2:&quot;.length()) + &quot;.sql&quot;;</span>
+<span class="nc" id="L65">                String option1 = &quot;SIMPLE&quot;;</span>
+<span class="nc" id="L66">                String option2 = &quot;&quot;;</span>
+<span class="nc" id="L67">                Script.process(connection, filename, option1, option2);</span>
+            }
+<span class="nc" id="L69">            catch (Exception e)</span>
+            {
+<span class="nc" id="L71">                logger.error(&quot;While exporting database&quot;, e);</span>
+<span class="nc" id="L72">            }</span>
+        }
+        else
+        {
+<span class="nc" id="L76">            logger.info(&quot;No H2 database, do not know how to export database&quot;);</span>
+        }
+<span class="nc" id="L78">    }</span>
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

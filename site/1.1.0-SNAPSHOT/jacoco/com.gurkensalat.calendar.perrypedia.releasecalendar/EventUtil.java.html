@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>EventUtil.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">perrypedia-release-calendar</a> &gt; <a href="index.source.html" class="el_package">com.gurkensalat.calendar.perrypedia.releasecalendar</a> &gt; <span class="el_source">EventUtil.java</span></div><h1>EventUtil.java</h1><pre class="source lang-java linenums">package com.gurkensalat.calendar.perrypedia.releasecalendar;
 
+import biweekly.component.VAlarm;
 import biweekly.component.VEvent;
 import biweekly.property.Categories;
+import biweekly.property.Trigger;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
-<span class="fc" id="L9">public class EventUtil</span>
+<span class="fc" id="L12">public class EventUtil</span>
 {
     @Value(&quot;${info.build.artifact}&quot;)
     private String projectArtifact;
@@ -16,7 +19,7 @@ import org.springframework.stereotype.Component;
 
     public VEvent convertToIcalEvent(Issue issue, WikiPage wikiPage)
     {
-<span class="fc" id="L19">        VEvent result = new VEvent();</span>
+<span class="fc" id="L22">        VEvent result = new VEvent();</span>
 
         // BEGIN:VEVENT
         // DTSTART:20160120T030000
@@ -35,29 +38,37 @@ import org.springframework.stereotype.Component;
 
         // logger.info(&quot;  {}&quot;, ToStringBuilder.reflectionToString(wikiPage, ToStringStyle.MULTI_LINE_STYLE));
 
-<span class="fc" id="L38">        result.setUid(wikiPage.getSeriesPrefix() + wikiPage.getIssueNumber());</span>
-<span class="fc" id="L39">        result.setSummary(wikiPage.getSeriesPrefix() + &quot; &quot; + wikiPage.getIssueNumber() + &quot;: &quot; + wikiPage.getFullPageTitle());</span>
-<span class="fc" id="L40">        int startOffset = issue.getSeries().getSourcePrefix().length() * 2 * 5;</span>
-<span class="fc" id="L41">        result.setDateStart(issue.getReleaseDate().plusMinutes(startOffset).toDate());</span>
-<span class="fc" id="L42">        result.setDateEnd(issue.getReleaseDate().plusMinutes(startOffset + 5).toDate());</span>
+<span class="fc" id="L41">        result.setUid(wikiPage.getSeriesPrefix() + wikiPage.getIssueNumber());</span>
+<span class="fc" id="L42">        result.setSummary(wikiPage.getSeriesPrefix() + &quot; &quot; + wikiPage.getIssueNumber() + &quot;: &quot; + wikiPage.getFullPageTitle());</span>
+<span class="fc" id="L43">        int startOffset = issue.getSeries().getSourcePrefix().length() * 2 * 5;</span>
+<span class="fc" id="L44">        result.setDateStart(issue.getReleaseDate().plusMinutes(startOffset).withHourOfDay(9).toDate());</span>
+<span class="fc" id="L45">        result.setDateEnd(issue.getReleaseDate().plusMinutes(startOffset + 5).withHourOfDay(9).toDate());</span>
 
-<span class="fc" id="L44">        String seriesName = issue.getSeries().getClass().getSimpleName();</span>
-<span class="fc" id="L45">        seriesName = seriesName.replace(&quot;Series&quot;, &quot;&quot;);</span>
-<span class="fc" id="L46">        seriesName = seriesName.replace(&quot;PerryRhodan&quot;, &quot;Perry Rhodan &quot;);</span>
-<span class="fc" id="L47">        seriesName = seriesName.trim();</span>
+<span class="fc" id="L47">        String seriesName = issue.getSeries().getClass().getSimpleName();</span>
+<span class="fc" id="L48">        seriesName = seriesName.replace(&quot;Series&quot;, &quot;&quot;);</span>
+<span class="fc" id="L49">        seriesName = seriesName.replace(&quot;PerryRhodan&quot;, &quot;Perry Rhodan &quot;);</span>
+<span class="fc" id="L50">        seriesName = seriesName.trim();</span>
 
-<span class="pc bpc" id="L49" title="1 of 2 branches missed.">        if (&quot;Perry Rhodan&quot;.equals(seriesName))</span>
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">        if (&quot;Perry Rhodan&quot;.equals(seriesName))</span>
         {
-<span class="fc" id="L51">            seriesName = seriesName + &quot; EA&quot;;</span>
+<span class="fc" id="L54">            seriesName = seriesName + &quot; EA&quot;;</span>
         }
 
-<span class="fc" id="L54">        result.addCategories(new Categories(seriesName));</span>
+<span class="fc" id="L57">        result.addCategories(new Categories(seriesName));</span>
 
-<span class="fc" id="L56">        result.addCategories(new Categories(&quot;Perry Rhodan&quot;));</span>
+<span class="fc" id="L59">        result.addCategories(new Categories(&quot;Perry Rhodan&quot;));</span>
+
+<span class="fc" id="L61">        DateTime triggerDate = issue.getReleaseDate().plusMinutes(issue.getSeries().getSourcePrefix().length() * 5).minusMinutes(5);</span>
+<span class="fc" id="L62">        Trigger trigger = new Trigger(triggerDate.toDate());</span>
+
+<span class="fc" id="L64">        VAlarm alarm = VAlarm.display(trigger, &quot;Download ebook&quot;);</span>
+<span class="fc" id="L65">        result.addAlarm(alarm);</span>
+
+<span class="fc" id="L67">        result.setUrl(&quot;https://www.beam-ebooks.de/kunden/bibliothek.php5&quot;);</span>
 
         // logger.info(&quot;  {}&quot;, ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
 
-<span class="fc" id="L60">        return result;</span>
+<span class="fc" id="L71">        return result;</span>
     }
 
 
