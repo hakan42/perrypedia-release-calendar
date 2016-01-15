@@ -1,10 +1,6 @@
 package com.gurkensalat.calendar.perrypedia.releasecalendar;
 
-import biweekly.ICalVersion;
-import biweekly.ICalendar;
 import biweekly.component.VEvent;
-import biweekly.io.text.ICalWriter;
-import biweekly.property.ProductId;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -38,7 +34,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.stream.StreamSource;
-import java.io.File;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -65,6 +60,9 @@ public class Application
 
     @Autowired
     private EventUtil eventUtil;
+
+    @Autowired
+    private ICalendarUtil iCalendarUtil;
 
     @Value("${info.build.artifact}")
     private String projectArtifact;
@@ -146,11 +144,11 @@ public class Application
         }
 
         // Finally, create the iCal file
-        saveIcal(allEvents, "All");
-        saveIcal(perryRhodanEvents, perryRhodanSeries.getSourcePrefix());
-        saveIcal(perryRhodanNeoEvents, perryRhodanNeoSeries.getSourcePrefix());
-        saveIcal(perryRhodanNeoStoryEvents, perryRhodanNeoStorySeries.getSourcePrefix());
-        saveIcal(perryRhodanArkonEvents, perryRhodanArkonSeries.getSourcePrefix());
+        iCalendarUtil.saveIcal(allEvents, "All");
+        iCalendarUtil.saveIcal(perryRhodanEvents, perryRhodanSeries.getSourcePrefix());
+        iCalendarUtil.saveIcal(perryRhodanNeoEvents, perryRhodanNeoSeries.getSourcePrefix());
+        iCalendarUtil.saveIcal(perryRhodanNeoStoryEvents, perryRhodanNeoStorySeries.getSourcePrefix());
+        iCalendarUtil.saveIcal(perryRhodanArkonEvents, perryRhodanArkonSeries.getSourcePrefix());
 
         return null;
     }
@@ -400,41 +398,5 @@ public class Application
         }
 
         return mwt;
-    }
-
-    private void saveIcal(Map<String, VEvent> events, String calendar)
-    {
-        ICalendar ical = new ICalendar();
-
-        ical.setProductId(new ProductId("-//Hakan Tandogan//" + projectArtifact + " " + projectVersion + "//EN"));
-
-        for (Map.Entry<String, VEvent> entry : events.entrySet())
-        {
-            // logger.info("Have to persist {}", entry.getKey());
-            // logger.info("  Event is {}", ToStringBuilder.reflectionToString(entry.getValue(), ToStringStyle.MULTI_LINE_STYLE));
-            ical.addEvent(entry.getValue());
-        }
-
-        try
-        {
-            File file = new File("PerryRhodan-" + calendar + ".ical");
-            ICalWriter writer = null;
-            try
-            {
-                writer = new ICalWriter(file, ICalVersion.V2_0);
-                writer.write(ical);
-            }
-            finally
-            {
-                if (writer != null)
-                {
-                    writer.close();
-                }
-            }
-        }
-        catch (Exception e)
-        {
-            logger.error("While saving calendar", e);
-        }
     }
 }
