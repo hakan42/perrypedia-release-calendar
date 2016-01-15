@@ -1,7 +1,10 @@
 package com.gurkensalat.calendar.perrypedia.releasecalendar;
 
+import biweekly.component.VAlarm;
 import biweekly.component.VEvent;
 import biweekly.property.Categories;
+import biweekly.property.Trigger;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -54,6 +57,12 @@ public class EventUtil
         result.addCategories(new Categories(seriesName));
 
         result.addCategories(new Categories("Perry Rhodan"));
+
+        DateTime triggerDate = issue.getReleaseDate().plusMinutes(issue.getSeries().getSourcePrefix().length() * 5).minusMinutes(5);
+        Trigger trigger = new Trigger(triggerDate.toDate());
+
+        VAlarm alarm = VAlarm.display(trigger, "Download ebook");
+        result.addAlarm(alarm);
 
         // logger.info("  {}", ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
 
