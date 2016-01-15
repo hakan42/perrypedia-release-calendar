@@ -3,6 +3,7 @@ package com.gurkensalat.calendar.perrypedia.releasecalendar;
 import biweekly.ICalVersion;
 import biweekly.ICalendar;
 import biweekly.component.VEvent;
+import biweekly.io.TzUrlDotOrgGenerator;
 import biweekly.io.text.ICalWriter;
 import biweekly.property.ProductId;
 import org.slf4j.Logger;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.io.File;
 import java.util.Map;
+import java.util.TimeZone;
 
 @Component
 public class ICalendarUtil
@@ -49,6 +51,14 @@ public class ICalendarUtil
             try
             {
                 writer = new ICalWriter(file, ICalVersion.V2_0);
+
+                // Beam Ebooks is located in Germany
+                TimeZone tz = TimeZone.getTimeZone("Europe/Berlin");
+                writer.getTimezoneInfo().setDefaultTimeZone(tz);
+
+                // Outlook-friendly VTIMEZONE components
+                writer.getTimezoneInfo().setGenerator(new TzUrlDotOrgGenerator(true));
+
                 writer.write(ical);
             }
             finally
