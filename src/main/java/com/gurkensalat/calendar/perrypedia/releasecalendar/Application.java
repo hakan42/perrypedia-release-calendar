@@ -56,6 +56,9 @@ public class Application
     private Environment environment;
 
     @Autowired
+    private PersistenceContext persistenceContext;
+
+    @Autowired
     private WikiPageRepository wikiPageRepository;
 
     @Autowired
@@ -142,6 +145,8 @@ public class Application
                 }
             }
         }
+
+        persistenceContext.exportDatabase();
 
         // Finally, create the iCal file
         iCalendarUtil.saveIcal(allEvents, "All");

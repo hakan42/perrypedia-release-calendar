@@ -24,6 +24,7 @@ env.*_IS_UNDEFINED
 
 # H2 database files
 *.mv.db
+*.sql
 
 # Generated Calendar files
 *.ical
