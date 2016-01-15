@@ -1,12 +1,11 @@
 package com.gurkensalat.calendar.perrypedia.releasecalendar;
 
-import junit.framework.Assert;
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.Assert.assertEquals;
 
 public class PerryRhodanNeoSeriesTest
 {
