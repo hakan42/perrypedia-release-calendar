@@ -23,8 +23,8 @@ public class PerryRhodanNeoStorySeries extends AbstractSeries
     // PRNS 5 - Oktober 2015
     public static final DateTime RELEASE_OF_ISSUE_5 = new DateTime().withDate(2015, 10, 1).withMillisOfDay(0);
 
-    // PRNS 6 - November 2015 - ebook 22. Januar 2016
-    public static final DateTime RELEASE_OF_ISSUE_6 = new DateTime().withDate(2016, 1, 22).withMillisOfDay(0);
+    // PRNS 6 - November 2015 - ebook 25. Januar 2016
+    public static final DateTime RELEASE_OF_ISSUE_6 = new DateTime().withDate(2016, 1, 25).withMillisOfDay(0);
 
     // PRNS 7 - März 2015 - ebook ???
     public static final DateTime RELEASE_OF_ISSUE_7 = new DateTime().withDate(2016, 10, 1).withMillisOfDay(0);
