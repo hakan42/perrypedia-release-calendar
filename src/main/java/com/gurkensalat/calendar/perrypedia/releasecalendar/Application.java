@@ -83,8 +83,8 @@ public class Application
     {
         // first, calculate which issues we need to check
 
-        DateTime start = DateTime.now().minusDays(7).withMillisOfDay(0);
-        DateTime end = DateTime.now().plusDays(60).withMillisOfDay(0);
+        DateTime start = DateTime.now().minusDays(14).withMillisOfDay(0);
+        DateTime end = DateTime.now().plusDays(90).withMillisOfDay(0);
 
         List<Issue> issuesToCheck = new ArrayList<Issue>();
 
