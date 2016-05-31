@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>ICalendarUtil.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">perrypedia-release-calendar</a> &gt; <a href="index.source.html" class="el_package">com.gurkensalat.calendar.perrypedia.releasecalendar</a> &gt; <span class="el_source">ICalendarUtil.java</span></div><h1>ICalendarUtil.java</h1><pre class="source lang-java linenums">package com.gurkensalat.calendar.perrypedia.releasecalendar;
+
+import biweekly.ICalVersion;
+import biweekly.ICalendar;
+import biweekly.component.VEvent;
+import biweekly.io.TzUrlDotOrgGenerator;
+import biweekly.io.text.ICalWriter;
+import biweekly.property.ProductId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
+
+import java.io.File;
+import java.util.Map;
+import java.util.TimeZone;
+
+@Component
+<span class="fc" id="L21">public class ICalendarUtil</span>
+{
+<span class="fc" id="L23">    private static final Logger logger = LoggerFactory.getLogger(ICalendarUtil.class);</span>
+
+    @Autowired
+    private Environment environment;
+
+    @Value(&quot;${info.build.artifact}&quot;)
+    private String projectArtifact;
+
+    @Value(&quot;${info.build.version}&quot;)
+    private String projectVersion;
+
+    public void saveIcal(Map&lt;String, VEvent&gt; events, String calendar)
+    {
+<span class="fc" id="L36">        ICalendar ical = new ICalendar();</span>
+
+<span class="fc" id="L38">        ical.setProductId(new ProductId(&quot;-//Hakan Tandogan//&quot; + projectArtifact + &quot; &quot; + projectVersion + &quot;//EN&quot;));</span>
+
+<span class="pc bpc" id="L40" title="1 of 2 branches missed.">        for (Map.Entry&lt;String, VEvent&gt; entry : events.entrySet())</span>
+        {
+            // logger.info(&quot;Have to persist {}&quot;, entry.getKey());
+            // logger.info(&quot;  Event is {}&quot;, ToStringBuilder.reflectionToString(entry.getValue(), ToStringStyle.MULTI_LINE_STYLE));
+<span class="nc" id="L44">            ical.addEvent(entry.getValue());</span>
+<span class="nc" id="L45">        }</span>
+
+        try
+        {
+<span class="fc" id="L49">            File file = new File(&quot;PerryRhodan-&quot; + calendar + &quot;.ical&quot;);</span>
+<span class="fc" id="L50">            ICalWriter writer = null;</span>
+            try
+            {
+<span class="fc" id="L53">                writer = new ICalWriter(file, ICalVersion.V2_0);</span>
+
+                // Beam Ebooks is located in Germany
+<span class="fc" id="L56">                TimeZone tz = TimeZone.getTimeZone(&quot;Europe/Berlin&quot;);</span>
+<span class="fc" id="L57">                writer.getTimezoneInfo().setDefaultTimeZone(tz);</span>
+
+                // Outlook-friendly VTIMEZONE components
+<span class="fc" id="L60">                writer.getTimezoneInfo().setGenerator(new TzUrlDotOrgGenerator(true));</span>
+
+<span class="fc" id="L62">                writer.write(ical);</span>
+            }
+            finally
+            {
+<span class="pc bpc" id="L66" title="3 of 4 branches missed.">                if (writer != null)</span>
+                {
+<span class="pc" id="L68">                    writer.close();</span>
+                }
+            }
+        }
+<span class="nc" id="L72">        catch (Exception e)</span>
+        {
+<span class="nc" id="L74">            logger.error(&quot;While saving calendar&quot;, e);</span>
+<span class="fc" id="L75">        }</span>
+<span class="fc" id="L76">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>
