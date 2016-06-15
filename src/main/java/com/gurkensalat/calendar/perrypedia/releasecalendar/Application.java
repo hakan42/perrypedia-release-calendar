@@ -173,7 +173,7 @@ public class Application
     {
         List<Issue> result = new ArrayList<Issue>();
 
-        for (int i = startIssue; i < endIssue; i++)
+        for (int i = startIssue; i <= endIssue; i++)
         {
             DateTime issueDate = series.getIssueReleaseDate(i);
 
