@@ -21,13 +21,13 @@
         <!-- Maven plugin versions -->
         <maven-clean-plugin.version>3.0.0</maven-clean-plugin.version>
         <maven-dependency-plugin.version>2.10</maven-dependency-plugin.version>
-        <maven-javadoc-plugin.version>2.10.3</maven-javadoc-plugin.version>
+        <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
         <maven-project-info-reports-plugin.version>2.9</maven-project-info-reports-plugin.version>
-        <maven-resources.plugin.version>3.0.0</maven-resources.plugin.version>
+        <maven-resources.plugin.version>3.0.1</maven-resources.plugin.version>
         <maven-source-plugin.version>3.0.0</maven-source-plugin.version>
         <maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
         <maven-jaxb2-plugin.version>0.13.1</maven-jaxb2-plugin.version>
-        <jacoco-plugin.version>0.7.6.201602180812</jacoco-plugin.version>
+        <jacoco-plugin.version>0.7.7.201606060606</jacoco-plugin.version>
         <fluido-skin.version>1.4</fluido-skin.version>
         <versions-maven-plugin.version>2.2</versions-maven-plugin.version>
 
