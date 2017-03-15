@@ -114,7 +114,7 @@ public class Application
         issuesToCheck.addAll(calculateIssues(perryRhodanJupiterSeries, 1, 12, start, end));
 
         // check Perry Rhodan Terminus next
-        Series perryRhodanTerminusSeries = new PerryRhodanJupiterSeries();
+        Series perryRhodanTerminusSeries = new PerryRhodanTerminusSeries();
         Map<String, VEvent> perryRhodanTerminusEvents = new TreeMap<String, VEvent>();
         issuesToCheck.addAll(calculateIssues(perryRhodanTerminusSeries, 1, 12, start, end));
 
