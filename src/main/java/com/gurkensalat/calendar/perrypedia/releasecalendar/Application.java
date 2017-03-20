@@ -91,12 +91,12 @@ public class Application
         // check Perry Rhodan Classic first
         Series perryRhodanSeries = new PerryRhodanSeries();
         Map<String, VEvent> perryRhodanEvents = new TreeMap<String, VEvent>();
-        issuesToCheck.addAll(calculateIssues(perryRhodanSeries, 2860, 2900, start, end));
+        issuesToCheck.addAll(calculateIssues(perryRhodanSeries, 2860, 2999, start, end));
 
         // check Perry Rhodan NEO next
         Series perryRhodanNeoSeries = new PerryRhodanNeoSeries();
         Map<String, VEvent> perryRhodanNeoEvents = new TreeMap<String, VEvent>();
-        issuesToCheck.addAll(calculateIssues(perryRhodanNeoSeries, 120, 150, start, end));
+        issuesToCheck.addAll(calculateIssues(perryRhodanNeoSeries, 140, 180, start, end));
 
         // check Perry Rhodan NEO Story next
         Series perryRhodanNeoStorySeries = new PerryRhodanNeoStorySeries();
