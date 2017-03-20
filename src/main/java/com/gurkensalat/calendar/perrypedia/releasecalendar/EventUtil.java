@@ -64,7 +64,7 @@ public class EventUtil
         VAlarm alarm = VAlarm.display(trigger, "Download ebook");
         result.addAlarm(alarm);
 
-        result.setUrl("https://www.beam-ebooks.de/kunden/bibliothek.php5");
+        result.setUrl("https://www.beam-shop.de/");
 
         // logger.info("  {}", ToStringBuilder.reflectionToString(result, ToStringStyle.MULTI_LINE_STYLE));
 
