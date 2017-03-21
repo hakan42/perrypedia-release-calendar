@@ -86,17 +86,21 @@ public class Application
         DateTime start = DateTime.now().minusDays(14).withMillisOfDay(0);
         DateTime end = DateTime.now().plusDays(90).withMillisOfDay(0);
 
+        int year = DateTime.now().getYear();
+
         List<Issue> issuesToCheck = new ArrayList<Issue>();
 
         // check Perry Rhodan Classic first
         Series perryRhodanSeries = new PerryRhodanSeries();
         Map<String, VEvent> perryRhodanEvents = new TreeMap<String, VEvent>();
-        issuesToCheck.addAll(calculateIssues(perryRhodanSeries, 2860, 2999, start, end));
+        int perryRhodanYearBeginIssue = 2785 + 53 * ( year - 2015 );
+        issuesToCheck.addAll(calculateIssues(perryRhodanSeries, perryRhodanYearBeginIssue - 20, perryRhodanYearBeginIssue + 70, start, end));
 
         // check Perry Rhodan NEO next
         Series perryRhodanNeoSeries = new PerryRhodanNeoSeries();
         Map<String, VEvent> perryRhodanNeoEvents = new TreeMap<String, VEvent>();
-        issuesToCheck.addAll(calculateIssues(perryRhodanNeoSeries, 140, 180, start, end));
+        int perryRhodanNeoYearBeginIssue = 86 + 26 * ( year - 2015 );
+        issuesToCheck.addAll(calculateIssues(perryRhodanNeoSeries, perryRhodanNeoYearBeginIssue - 10, perryRhodanNeoYearBeginIssue + 40, start, end));
 
         // check Perry Rhodan NEO Story next
         Series perryRhodanNeoStorySeries = new PerryRhodanNeoStorySeries();
