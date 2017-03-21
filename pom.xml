@@ -17,9 +17,13 @@
         <maven-prerequisite.version>3.2.0</maven-prerequisite.version>
 
         <java.version>1.8</java.version>
+        <compile.source.jdk>${java.version}</compile.source.jdk>
+        <compile.target.jdk>${java.version}</compile.target.jdk>
+
 
         <!-- Maven plugin versions -->
         <maven-clean-plugin.version>3.0.0</maven-clean-plugin.version>
+        <maven-compiler-plugin>3.5.1</maven-compiler-plugin>
         <maven-dependency-plugin.version>2.10</maven-dependency-plugin.version>
         <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
         <maven-project-info-reports-plugin.version>2.9</maven-project-info-reports-plugin.version>
@@ -379,6 +383,19 @@
                                 <directory>env.PWD_IS_UNDEFINED</directory>
                             </fileset>
                         </filesets>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin}</version>
+                    <configuration>
+                        <source>${compile.source.jdk}</source>
+                        <target>${compile.target.jdk}</target>
+                        <encoding>${project.build.sourceEncoding}</encoding>
+                        <showDeprecation>true</showDeprecation>
+                        <showWarnings>true</showWarnings>
                     </configuration>
                 </plugin>
 
