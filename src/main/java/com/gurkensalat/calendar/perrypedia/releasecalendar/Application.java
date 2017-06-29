@@ -373,7 +373,7 @@ public class Application
         // --data 'catname=&pages=Leticrons+S%E4ule&curonly=1&wpDownload=1'
 
 
-        final String EXPORT_URL = "http://www.perrypedia.proc.org/mediawiki/index.php?title=Spezial:Exportieren&action=submit";
+        final String EXPORT_URL = "https://www.perrypedia.proc.org/mediawiki/index.php?title=Spezial:Exportieren&action=submit";
 
         String userAgent = projectArtifact + "/" + projectVersion;
         userAgent = userAgent + " " + VersionInfo.getUserAgent("Apache-HttpClient", "org.apache.http.client", getClass());
