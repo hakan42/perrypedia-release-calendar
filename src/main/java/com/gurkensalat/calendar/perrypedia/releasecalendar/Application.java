@@ -93,14 +93,28 @@ public class Application
         // check Perry Rhodan Classic first
         Series perryRhodanSeries = new PerryRhodanSeries();
         Map<String, VEvent> perryRhodanEvents = new TreeMap<String, VEvent>();
-        int perryRhodanYearBeginIssue = 2785 + 53 * ( year - 2015 );
-        issuesToCheck.addAll(calculateIssues(perryRhodanSeries, perryRhodanYearBeginIssue - 20, perryRhodanYearBeginIssue + 70, start, end));
+        {
+            int perryRhodanYearBeginIssue = 2785 + 53 * (year - 2015);
+            int startIssue = perryRhodanYearBeginIssue - 20;
+            int endIssue = perryRhodanYearBeginIssue + 70;
+            logger.debug("Calculating main series issues for main series from {} to {}", startIssue, endIssue);
+            List<Issue> issues = calculateIssues(perryRhodanSeries, startIssue, endIssue, start, end);
+            logger.debug("Scanning main series issues from {} to {}", issues.get(0).getNumber(), issues.get(issues.size() - 1).getNumber());
+            issuesToCheck.addAll(issues);
+        }
 
         // check Perry Rhodan NEO next
         Series perryRhodanNeoSeries = new PerryRhodanNeoSeries();
         Map<String, VEvent> perryRhodanNeoEvents = new TreeMap<String, VEvent>();
-        int perryRhodanNeoYearBeginIssue = 86 + 26 * ( year - 2015 );
-        issuesToCheck.addAll(calculateIssues(perryRhodanNeoSeries, perryRhodanNeoYearBeginIssue - 10, perryRhodanNeoYearBeginIssue + 40, start, end));
+        {
+            int perryRhodanNeoYearBeginIssue = 86 + 26 * (year - 2015);
+            int startIssue = perryRhodanNeoYearBeginIssue - 10;
+            int endIssue = perryRhodanNeoYearBeginIssue + 40;
+            logger.debug("Calculating main series issues for main series from {} to {}", startIssue, endIssue);
+            List<Issue> issues = calculateIssues(perryRhodanNeoSeries, startIssue, endIssue, start, end);
+            logger.debug("Scanning main series issues from {} to {}", issues.get(0).getNumber(), issues.get(issues.size() - 1).getNumber());
+            issuesToCheck.addAll(issues);
+        }
 
         // check Perry Rhodan NEO Story next
         Series perryRhodanNeoStorySeries = new PerryRhodanNeoStorySeries();
