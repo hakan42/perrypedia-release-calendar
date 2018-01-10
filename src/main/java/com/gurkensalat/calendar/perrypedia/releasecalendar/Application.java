@@ -73,6 +73,9 @@ public class Application
     @Value("${info.build.version}")
     private String projectVersion;
 
+    @Value("${sleep:30}")
+    private int sleepBetweenIssues;
+
     public static void main(String[] args)
     {
         SpringApplication.run(Application.class);
@@ -141,6 +144,7 @@ public class Application
         issuesToCheck.addAll(calculateIssues(perryRhodanOlympSeries, 1, 12, start, end));
 
         // Now, to the Perrypedia checks...
+        logger.info("Sleeping {} seconds between checks", sleepBetweenIssues);
         Map<String, VEvent> allEvents = new TreeMap<String, VEvent>();
         for (Issue issue : issuesToCheck)
         {
@@ -191,6 +195,8 @@ public class Application
                     }
                 }
             }
+
+            Thread.sleep(sleepBetweenIssues * 1000);
         }
 
         persistenceContext.exportDatabase();
