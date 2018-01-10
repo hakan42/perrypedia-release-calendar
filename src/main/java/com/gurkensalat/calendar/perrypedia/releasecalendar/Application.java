@@ -82,9 +82,8 @@ public class Application
     public CommandLineRunner work() throws Exception
     {
         // first, calculate which issues we need to check
-
         DateTime start = DateTime.now().minusDays(14).withMillisOfDay(0);
-        DateTime end = DateTime.now().plusDays(90).withMillisOfDay(0);
+        DateTime end = DateTime.now().plusDays(60).withMillisOfDay(0);
 
         int year = DateTime.now().getYear();
 
