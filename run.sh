@@ -3,7 +3,9 @@
 SCRIPT=$(readlink -f $0)
 HERE=$(dirname ${SCRIPT})
 
-DEST=${HOME}/ownCloud/perrypedia-release-calendar
+VERBOSE=${1:-no}
+
+DEST=${HOME}/nextCloud-int/perrypedia-release-calendar
 
 cd ${HERE}
 
@@ -17,11 +19,24 @@ mvn -U clean install \
 
 mkdir -p ${DEST}
 
-if [ -r ${DEST}/../on-ownCloud.txt ]
+if [ -r ${DEST}/../on-nextCloud.txt ]
 then
     cd ${DEST}
     java -jar ${HERE}/target/perrypedia-release-calendar-*-executable.jar \
 	 -Dsleep=30 \
 	 > ${HERE}/java-run.log \
 	 2> ${HERE}/java-run.err
+fi
+
+if [ ${VERBOSE} = "-v" ]
+then
+    echo
+
+    cat ${HERE}/java-run.log
+
+    echo
+
+    cat ${HERE}/java-run.err
+
+    echo
 fi
