@@ -143,6 +143,11 @@ public class Application
         Map<String, VEvent> perryRhodanOlympEvents = new TreeMap<String, VEvent>();
         issuesToCheck.addAll(calculateIssues(perryRhodanOlympSeries, 1, 12, start, end));
 
+        // check Perry Rhodan Olymp next
+        Series perryRhodanMissionSolSeries = new PerryRhodanMissionSolSeries();
+        Map<String, VEvent> perryRhodanMissionSolEvents = new TreeMap<String, VEvent>();
+        issuesToCheck.addAll(calculateIssues(perryRhodanMissionSolSeries, 1, 12, start, end));
+
         // Now, to the Perrypedia checks...
         logger.info("Sleeping {} seconds between checks", sleepBetweenIssues);
         Map<String, VEvent> allEvents = new TreeMap<String, VEvent>();
@@ -193,6 +198,11 @@ public class Application
                     {
                         perryRhodanOlympEvents.put(key, event);
                     }
+
+                    if (perryRhodanMissionSolSeries.getSourcePrefix().equals(issue.getSeries().getSourcePrefix()))
+                    {
+                        perryRhodanMissionSolEvents.put(key, event);
+                    }
                 }
             }
 
@@ -210,6 +220,7 @@ public class Application
         iCalendarUtil.saveIcal(perryRhodanJupiterEvents, perryRhodanJupiterSeries.getSourcePrefix());
         iCalendarUtil.saveIcal(perryRhodanTerminusEvents, perryRhodanTerminusSeries.getSourcePrefix());
         iCalendarUtil.saveIcal(perryRhodanOlympEvents, perryRhodanOlympSeries.getSourcePrefix());
+        iCalendarUtil.saveIcal(perryRhodanMissionSolEvents, perryRhodanMissionSolSeries.getSourcePrefix());
 
         return null;
     }
