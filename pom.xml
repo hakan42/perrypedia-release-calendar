@@ -28,7 +28,7 @@
         <maven-javadoc-plugin.version>2.10.4</maven-javadoc-plugin.version>
         <maven-project-info-reports-plugin.version>2.9</maven-project-info-reports-plugin.version>
         <maven-resources.plugin.version>3.0.1</maven-resources.plugin.version>
-        <maven-source-plugin.version>3.0.0</maven-source-plugin.version>
+        <maven-source-plugin.version>3.1.0</maven-source-plugin.version>
         <maven-surefire-plugin.version>2.19.1</maven-surefire-plugin.version>
         <maven-jaxb2-plugin.version>0.13.1</maven-jaxb2-plugin.version>
         <jacoco-plugin.version>0.7.7.201606060606</jacoco-plugin.version>
