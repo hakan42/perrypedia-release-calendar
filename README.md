@@ -5,7 +5,7 @@ Creates an ICF calendar feed for a given part series at perrypedia.proc.org
 
 |     |     |
 | --- | --- |
-| All Contributors | [![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors) |
+| All Contributors | [![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors) |
 | Continuous Integration | [![](https://travis-ci.org/hakan42/perrypedia-release-calendar.svg?branch=master)](https://travis-ci.org/hakan42/perrypedia-release-calendar) |
 | Code Coverage | [![codecov.io](http://codecov.io/github/hakan42/perrypedia-release-calendar/coverage.svg?branch=master)](http://codecov.io/github/hakan42/perrypedia-release-calendar?branch=master) |
 | Chat Room | [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/hakan42/perrypedia-release-calendar?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge) |
@@ -28,7 +28,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore -->
-<table><tr><td align="center"><a href="https://blog.gurkensalat.com/"><img src="https://avatars2.githubusercontent.com/u/352641?v=4" width="100px;" alt="Hakan Tandogan"/><br /><sub><b>Hakan Tandogan</b></sub></a><br /><a href="https://github.com/hakan42/perrypedia-release-calendar/commits?author=hakan42" title="Code">💻</a></td></tr></table>
+<table><tr><td align="center"><a href="https://blog.gurkensalat.com/"><img src="https://avatars2.githubusercontent.com/u/352641?v=4" width="100px;" alt="Hakan Tandogan"/><br /><sub><b>Hakan Tandogan</b></sub></a><br /><a href="https://github.com/hakan42/perrypedia-release-calendar/commits?author=hakan42" title="Code">💻</a></td><td align="center"><a href="https://dependabot.com"><img src="https://avatars1.githubusercontent.com/u/27347476?v=4" width="100px;" alt="Dependabot"/><br /><sub><b>Dependabot</b></sub></a><br /><a href="https://github.com/hakan42/perrypedia-release-calendar/commits?author=dependabot" title="Code">💻</a></td></tr></table>
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
