@@ -58,7 +58,7 @@
         <logback.version>1.1.7</logback.version>
 
         <!-- Calendar handling -->
-        <biweekly.version>0.4.6</biweekly.version>
+        <biweekly.version>0.6.3</biweekly.version>
 
         <!-- Wiki Bot Framework Library -->
         <jwbf.version>3.1.1</jwbf.version>
