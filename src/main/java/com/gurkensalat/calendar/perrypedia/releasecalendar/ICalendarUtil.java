@@ -3,7 +3,7 @@ package com.gurkensalat.calendar.perrypedia.releasecalendar;
 import biweekly.ICalVersion;
 import biweekly.ICalendar;
 import biweekly.component.VEvent;
-import biweekly.io.TzUrlDotOrgGenerator;
+import biweekly.io.TimezoneAssignment;
 import biweekly.io.text.ICalWriter;
 import biweekly.property.ProductId;
 import org.slf4j.Logger;
@@ -35,6 +35,12 @@ public class ICalendarUtil
     {
         ICalendar ical = new ICalendar();
 
+        // Beam Ebooks is located in Germany
+        TimeZone tz = TimeZone.getTimeZone("Europe/Berlin");
+        // Outlook-friendly VTIMEZONE components
+        TimezoneAssignment tza = TimezoneAssignment.download(tz, true);
+        ical.getTimezoneInfo().setDefaultTimezone(tza);
+
         ical.setProductId(new ProductId("-//Hakan Tandogan//" + projectArtifact + " " + projectVersion + "//EN"));
 
         for (Map.Entry<String, VEvent> entry : events.entrySet())
@@ -51,14 +57,6 @@ public class ICalendarUtil
             try
             {
                 writer = new ICalWriter(file, ICalVersion.V2_0);
-
-                // Beam Ebooks is located in Germany
-                TimeZone tz = TimeZone.getTimeZone("Europe/Berlin");
-                writer.getTimezoneInfo().setDefaultTimeZone(tz);
-
-                // Outlook-friendly VTIMEZONE components
-                writer.getTimezoneInfo().setGenerator(new TzUrlDotOrgGenerator(true));
-
                 writer.write(ical);
             }
             finally
