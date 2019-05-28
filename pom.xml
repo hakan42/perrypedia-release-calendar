@@ -33,7 +33,7 @@
         <maven-jaxb2-plugin.version>0.13.1</maven-jaxb2-plugin.version>
         <jacoco-plugin.version>0.7.7.201606060606</jacoco-plugin.version>
         <fluido-skin.version>1.4</fluido-skin.version>
-        <versions-maven-plugin.version>2.2</versions-maven-plugin.version>
+        <versions-maven-plugin.version>2.7</versions-maven-plugin.version>
 
         <!-- Spring / Spring Boot versions -->
         <spring-boot.version>1.3.8.RELEASE</spring-boot.version>
