@@ -47,7 +47,7 @@
         <hibernate-jpa.version>1.0.0.Final</hibernate-jpa.version>
         <hibernate-validator.version>5.2.2.Final</hibernate-validator.version>
         <h2-database.version>1.4.192</h2-database.version>
-        <jadira-usertype.version>5.0.0.GA</jadira-usertype.version>
+        <jadira-usertype.version>6.0.1.GA</jadira-usertype.version>
 
         <!-- Sundry other libraries -->
         <commons-lang.version>3.4</commons-lang.version>
