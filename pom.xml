@@ -65,7 +65,7 @@
         <jaxb.version>2.3.0</jaxb.version>
 
         <!-- Testing -->
-        <junit.version>4.12</junit.version>
+        <junit.version>4.13</junit.version>
     </properties>
 
     <scm>
