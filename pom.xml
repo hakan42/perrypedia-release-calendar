@@ -8,7 +8,7 @@
 
     <inceptionYear>2016</inceptionYear>
     <url>https://hakan42.github.com/perrypedia-release-calendar/</url>
-    <description />
+    <description/>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -52,7 +52,7 @@
         <!-- Sundry other libraries -->
         <commons-lang.version>3.9</commons-lang.version>
         <commons-io.version>2.7</commons-io.version>
-        <httpclient.version>4.5.8</httpclient.version>
+        <httpclient.version>4.5.13</httpclient.version>
         <joda-time.version>2.9.4</joda-time.version>
         <slf4j.version>1.7.30</slf4j.version>
         <logback.version>1.2.3</logback.version>
