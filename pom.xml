@@ -36,7 +36,7 @@
         <versions-maven-plugin.version>2.7</versions-maven-plugin.version>
 
         <!-- Spring / Spring Boot versions -->
-        <spring-boot.version>1.3.8.RELEASE</spring-boot.version>
+        <spring-boot.version>2.4.3</spring-boot.version>
         <spring-data.version>1.10.1.RELEASE</spring-data.version>
         <spring-boot.start.class>com.gurkensalat.calendar.perrypedia.releasecalendar.Application</spring-boot.start.class>
 
