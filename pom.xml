@@ -31,7 +31,7 @@
         <maven-source-plugin.version>3.2.1</maven-source-plugin.version>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <maven-jaxb2-plugin.version>0.14.0</maven-jaxb2-plugin.version>
-        <jacoco-plugin.version>0.8.4</jacoco-plugin.version>
+        <jacoco-plugin.version>0.8.7</jacoco-plugin.version>
         <fluido-skin.version>1.4</fluido-skin.version>
         <versions-maven-plugin.version>2.7</versions-maven-plugin.version>
 
