@@ -43,7 +43,7 @@
         <!-- Database stuff -->
         <jta.version>1.1</jta.version>
         <hikari-cp.version>2.4.6</hikari-cp.version>
-        <hibernate.version>5.1.0.Final</hibernate.version>
+        <hibernate.version>5.6.1.Final</hibernate.version>
         <hibernate-jpa.version>1.0.0.Final</hibernate-jpa.version>
         <hibernate-validator.version>5.2.2.Final</hibernate-validator.version>
         <h2-database.version>1.4.192</h2-database.version>
